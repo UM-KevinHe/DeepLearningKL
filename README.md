@@ -12,6 +12,19 @@ def __init__(self, net, optimizer=None, device=None, duration_index=None, loss=N
 +       loss = models.loss.NewlyDefinedLoss()
     super().__init__(net, loss, optimizer, device)
 ```
+This is because the loss function is slightly changed for our project.
+2. Add class `NewlyDefinedLoss` in `loss.py`:
+```diff
+def newly_defined_loss(phi: Tensor, combined_info: Tensor, idx_durations: Tensor, events: Tensor,
+                        reduction: str = 'mean') -> Tensor:
+    if events.dtype is torch.bool:
+        events = events.float()
+    events = events.view(-1, 1)
+    idx_durations = idx_durations.view(-1, 1)
+    bce = F.binary_cross_entropy_with_logits(phi, combined_info, reduction='none')
+    loss = bce.cumsum(1).gather(1, idx_durations).view(-1)
+    return _reduction(loss, reduction)
+```
 
 [1]: https://github.com/havakv/pycox
 [2]: https://github.com/UM-KevinHe/DeepLearningKL/blob/main/Deep%20Learning%20with%20KL%20Divergence.ipynb
