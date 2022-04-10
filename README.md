@@ -56,6 +56,11 @@ def newly_defined_loss(phi: Tensor, combined_info: Tensor, idx_durations: Tensor
     return _reduction(loss, reduction)
 ```
 
+where `combined_info` is the hazard function obtained from prior information.
+
+## References
+[Di Wang, Wen Ye, Kevin He Proceedings of AAAI Spring Symposium on Survival Prediction - Algorithms, Challenges, and Applications 2021, PMLR 146:232-239, 2021.][3]
+
 [1]: https://github.com/havakv/pycox
 [2]: https://github.com/UM-KevinHe/DeepLearningKL/blob/main/Deep%20Learning%20with%20KL%20Divergence.ipynb
-
+[3]: http://proceedings.mlr.press/v146/wang21b/wang21b.pdf
