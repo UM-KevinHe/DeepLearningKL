@@ -1,7 +1,7 @@
 # DeepLearningKL
 This project is to train deep learning survival model with prior information, where KL divergence is used for incorporating. The code is modified based on [pycox][1].
 ## Core Idea
-$$ f(x) $$
+$f(x)$
 ## Code Details
 We have modified a small part of pycox for training deep learning model. So please make sure that the following steps are completed before running the [notebook][2].
 1. Change `LogisticHazard` in `logistic_hazard.py`:
