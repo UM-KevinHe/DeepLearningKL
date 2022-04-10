@@ -8,8 +8,8 @@ def __init__(self, net, optimizer=None, device=None, duration_index=None, loss=N
     self.duration_index = duration_index
     if loss is None:
         loss = models.loss.NLLLogistiHazardLoss()
- +   if loss == "option":
- +       loss = models.loss.NewlyDefinedLoss()
++   if loss == "option":
++       loss = models.loss.NewlyDefinedLoss()
     super().__init__(net, loss, optimizer, device)
 ```
 
