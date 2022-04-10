@@ -15,6 +15,15 @@ def __init__(self, net, optimizer=None, device=None, duration_index=None, loss=N
 This is because the loss function is slightly changed for our project.
 
 2. Add class `NewlyDefinedLoss` in `loss.py`:
+
+```diff
+class NewlyDefinedLoss(_Loss):
+    def forward(self, phi: Tensor, combined_info: Tensor, idx_durations: Tensor, events: Tensor) -> Tensor:
+        return newly_defined_loss(phi, combined_info, idx_durations, events, self.reduction)
+```
+
+3. Add method `newly_defined_loss` in `loss.py`:
+
 ```diff
 def newly_defined_loss(phi: Tensor, combined_info: Tensor, idx_durations: Tensor, events: Tensor,
                         reduction: str = 'mean') -> Tensor:
