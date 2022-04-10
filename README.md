@@ -13,6 +13,7 @@ def __init__(self, net, optimizer=None, device=None, duration_index=None, loss=N
     super().__init__(net, loss, optimizer, device)
 ```
 This is because the loss function is slightly changed for our project.
+
 2. Add class `NewlyDefinedLoss` in `loss.py`:
 ```diff
 def newly_defined_loss(phi: Tensor, combined_info: Tensor, idx_durations: Tensor, events: Tensor,
@@ -22,6 +23,26 @@ def newly_defined_loss(phi: Tensor, combined_info: Tensor, idx_durations: Tensor
     events = events.view(-1, 1)
     idx_durations = idx_durations.view(-1, 1)
     bce = F.binary_cross_entropy_with_logits(phi, combined_info, reduction='none')
+    loss = bce.cumsum(1).gather(1, idx_durations).view(-1)
+    return _reduction(loss, reduction)
+```
+
+Here is the diff between our loss function and `NLLLogistiHazardLoss`
+```diff
+def newly_defined_loss(phi: Tensor, combined_info: Tensor, idx_durations: Tensor, events: Tensor,
+                        reduction: str = 'mean') -> Tensor:
+
+-   if phi.shape[1] <= idx_durations.max():
+-       raise ValueError(f"Network output `phi` is too small for `idx_durations`." +
+-                        f" Need at least `phi.shape[1] = {idx_durations.max().item() + 1}`," +
+-                        f" but got `phi.shape[1] = {phi.shape[1]}`")
+    if events.dtype is torch.bool:
+        events = events.float()
+    events = events.view(-1, 1)
+    idx_durations = idx_durations.view(-1, 1)
+-   y_bce = torch.zeros_like(phi).scatter(1, idx_durations, events)  # TODO: Data Expansion!
+-   bce = F.binary_cross_entropy_with_logits(phi, y_bce, reduction='none')
++   bce = F.binary_cross_entropy_with_logits(phi, combined_info, reduction='none')
     loss = bce.cumsum(1).gather(1, idx_durations).view(-1)
     return _reduction(loss, reduction)
 ```
