@@ -1,9 +1,7 @@
 # DeepLearningKL
 This project is to train deep learning survival model with prior information, where KL divergence is used for incorporating. The code is modified based on [pycox][1].
 ## Core Idea
-<img src="https://render.githubusercontent.com/render/math?math=l(\boldsymbol{\theta})=\sum_{i=1}^{n} \sum_{k=1}^{K} Y_{i}\left(t_{k}\right)\left[\delta_{i}\left(t_{k}\right) \log \left\{\frac{g\left(\gamma_{k}+\mathbf{Z}_{i}^{T} \boldsymbol{\beta}\right)}{1-g\left(\gamma_{k}+\mathbf{Z}_{i}^{T} \boldsymbol{\beta}\right)}\right\}+\log \left\{1-g\left(\gamma_{k}+\mathbf{Z}_{i}^{T} \boldsymbol{\beta}\right)\right\}\right]">
-
-$f(x)$
+See 2.1 [here][4]
 
 ## Code Details
 We have modified a small part of pycox for training deep learning model. So please make sure that the following steps are completed before running the [notebook][2].
@@ -69,3 +67,4 @@ where `combined_info` is the hazard function obtained from prior information.
 [1]: https://github.com/havakv/pycox
 [2]: https://github.com/UM-KevinHe/DeepLearningKL/blob/main/Deep%20Learning%20with%20KL%20Divergence.ipynb
 [3]: http://proceedings.mlr.press/v146/wang21b/wang21b.pdf
+[4]: https://github.com/UM-KevinHe/DeepLearningKL/blob/main/Deep_Learning_with_KL_divergence__Code_Details.pdf
