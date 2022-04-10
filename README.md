@@ -1,7 +1,7 @@
 # DeepLearningKL
 This project is to train deep learning survival model with prior information, where KL divergence is used for incorporating. The code is modified based on [pycox][1].
 ## Core Idea
-<img src="https://render.githubusercontent.com/render/math?math=e^{i \pi} = -1">
+<img src="https://render.githubusercontent.com/render/math?math=l(\boldsymbol{\theta})=\sum_{i=1}^{n} \sum_{k=1}^{K} Y_{i}\left(t_{k}\right)\left[\delta_{i}\left(t_{k}\right) \log \left\{\frac{g\left(\gamma_{k}+\mathbf{Z}_{i}^{T} \boldsymbol{\beta}\right)}{1-g\left(\gamma_{k}+\mathbf{Z}_{i}^{T} \boldsymbol{\beta}\right)}\right\}+\log \left\{1-g\left(\gamma_{k}+\mathbf{Z}_{i}^{T} \boldsymbol{\beta}\right)\right\}\right]">
 
 $f(x)$
 
