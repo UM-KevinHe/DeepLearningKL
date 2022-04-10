@@ -3,7 +3,7 @@ This project is to train deep learning survival model with prior information, wh
 ## Code Details
 We have modified a small part of pycox for training deep learning model. So please make sure that the following steps are completed before running the [notebook][2].
 1. Change `LogisticHazard` in `logistic_hazard.py`:
-```diff
+```Python;diff
 def __init__(self, net, optimizer=None, device=None, duration_index=None, loss=None):
     self.duration_index = duration_index
     if loss is None:
