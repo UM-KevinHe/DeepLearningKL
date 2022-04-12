@@ -4,7 +4,7 @@ This project is to train deep learning survival model with prior information, wh
 See 2.1 [here][4]
 
 ## Preliminary Result
-Here is one comparison result, with local model both trained with LogisticHazard (nnet-survival). For the group integrating with KL divergence, the parameters are trained by Logistic Regression using prior data.
+Here is one comparison result, with local model both trained with LogisticHazard (nnet-survival). For the group integrating with KL divergence, the parameters are trained by Logistic Regression using prior data. Experiments are done 50 times with the same training, validation and test data. Cross Validation (CV) is not used for saving time. But based on the result, our model should perform better after applying CV.
 ![image](https://user-images.githubusercontent.com/48302151/162856554-2e5d4c7b-715b-4791-98a8-0882483064e0.png)
 
 ## Code Details
