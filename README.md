@@ -3,6 +3,10 @@ This project is to train deep learning survival model with prior information, wh
 ## Core Idea
 See 2.1 [here][4]
 
+## Preliminary Result
+Here is one comparison result, with local model both trained with LogisticHazard (nnet-survival). For the group integrating with KL divergence, the parameters are trained by Logistic Regression using prior data.
+![image](https://user-images.githubusercontent.com/48302151/162856554-2e5d4c7b-715b-4791-98a8-0882483064e0.png)
+
 ## Code Details
 We have modified a small part of pycox for training deep learning model. So please make sure that the following steps are completed before running the [notebook][2].
 1. Change `LogisticHazard` in `logistic_hazard.py`:
