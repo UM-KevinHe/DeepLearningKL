@@ -22,12 +22,15 @@ Although these two tutorials show two versions of prior model. The core of using
 
 ## Models and Evaluation Metrics
 
-We compare our model with [Cox model][8], Deepsurv, extended Cox model with case-control sampling [3] and LogisticHazard [5]. We also use three evaluation metrics, which are Concordance-Index, Integrated Brier Score and Integrated Negative Binomial Log Likelihood. Except for Cox model, all codes are available from pycox. We appreciate the great convenience provided by this excellent package.
+We compare our model with [Cox model]([Python Code][8], [Model][9]) Deepsurv, [extended Cox model with case-control sampling][5] and [LogisticHazard] [3]. We also use three evaluation metrics, which are Concordance-Index, Integrated Brier Score and Integrated Negative Binomial Log Likelihood. Except for Cox model, all codes are available from pycox. We appreciate the great convenience provided by this excellent package.
 
 ## References
-[Di Wang, Wen Ye, Kevin He Proceedings of AAAI Spring Symposium on Survival Prediction - Algorithms, Challenges, and Applications 2021, PMLR 146:232-239, 2021.][3]
+[1. Di Wang, Wen Ye, Kevin He Proceedings of AAAI Spring Symposium on Survival Prediction - Algorithms, Challenges, and Applications 2021, PMLR 146:232-239, 2021.][3]
 
-[Kvamme H, Borgan Ø. Continuous and discrete-time survival prediction with neural networks. arXiv preprint arXiv:1910.06724. 2019 Oct 15.][5]
+[2. Kvamme H, Borgan Ø. Continuous and discrete-time survival prediction with neural networks. arXiv preprint arXiv:1910.06724. 2019 Oct 15.][5]
+
+[3. Cox, D. R. (1972). Regression models and life-tables. Journal of the Royal Statistical Society:
+Series B (Methodological), 34(2):187–202.][9]
 
 [1]: https://github.com/havakv/pycox
 [2]: https://github.com/UM-KevinHe/DeepLearningKL/blob/main/Deep%20Learning%20with%20KL%20Divergence.ipynb
@@ -37,3 +40,4 @@ We compare our model with [Cox model][8], Deepsurv, extended Cox model with case
 [6]: https://nbviewer.org/github/UM-KevinHe/DeepLearningKL/blob/main/Tutorial_1_Using_Our_Model_with_Deep_Learning_as_Prior.ipynb
 [7]: https://biostat.app.vumc.org/wiki/Main/SupportDesc
 [8]: https://lifelines.readthedocs.io/en/latest/Quickstart.html
+[9]: http://www.biecek.pl/statystykamedyczna/cox.pdf
