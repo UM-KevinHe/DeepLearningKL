@@ -20,8 +20,13 @@ We have provided with 2 notebooks with interactive codes and results to show the
 
 Although these two tutorials show two versions of prior model. The core of using our model is to make sure the hazard rates matrix can be obtained with n be the number of observations (number of rows for this matrix) and K be the number of time intervals of discrete-time model (number of cols). Either one is OK to begin with, we provide each tutorial with the same amount of details for users.
 
+## Models and Evaluation Metrics
+
+We compare our model with [Cox model][8], Deepsurv, extended Cox model with case-control sampling and LogisticHazard. We also use three evaluation metrics, which are Concordance-Index, Integrated Brier Score and Integrated Negative Binomial Log Likelihood. Except for Cox model, all codes are available from pycox. We appreciate the great convenience provided by this excellent package.
+
 ## References
 [Di Wang, Wen Ye, Kevin He Proceedings of AAAI Spring Symposium on Survival Prediction - Algorithms, Challenges, and Applications 2021, PMLR 146:232-239, 2021.][3]
+
 [Kvamme H, Borgan Ø. Continuous and discrete-time survival prediction with neural networks. arXiv preprint arXiv:1910.06724. 2019 Oct 15.][5]
 
 [1]: https://github.com/havakv/pycox
@@ -31,3 +36,4 @@ Although these two tutorials show two versions of prior model. The core of using
 [5]: https://arxiv.org/abs/1910.06724
 [6]: https://nbviewer.org/github/UM-KevinHe/DeepLearningKL/blob/main/Tutorial_1_Using_Our_Model_with_Deep_Learning_as_Prior.ipynb
 [7]: https://biostat.app.vumc.org/wiki/Main/SupportDesc
+[8]: https://lifelines.readthedocs.io/en/latest/Quickstart.html
