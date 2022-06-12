@@ -1,70 +1,18 @@
 # DeepLearningKL
-This project is to train deep learning survival model with prior information, where KL divergence is used for incorporating. The code is modified based on [pycox][1].
+This project is to train deep learning survival model with prior information, where KL divergence is used for incorporating. The code is modified based on [pycox][1], with the changes of loss function and the way to obtain necessary "prior information" used for it.
 ## Core Idea
-See 2.1 [here][4]
+Basically, we exploit the similarity of the loss function in discrete-time model and the KL divergence. Due to that reason it is really easy to find out how to compute the loss function and the way to unify two loss functions. For more details, see 2.1 [here][4].
 
-## Preliminary Result
-Here is one comparison result, with local model both trained with LogisticHazard (nnet-survival). For the group integrating with KL divergence, the parameters are trained by Logistic Regression using prior data. Experiments are done 50 times with the same training, validation and test data. Cross Validation (CV) is not used for saving time. But based on the result, our model should perform better after applying CV.
+## Real Data Result: Visualization
+This is one comparison result that trained on SUPPORT data, we sample most of the data as prior data and the remaining data are used as local data. The prior data will be used to train a prior model and we obtain the estimated hazard rates from this prior model. The estimated hazard rates will be used to compute the value of our loss function and the model will be trained based on this loss function with only local data. For other models, only local data is accessible. 
+
+The experiments are done 50 times with different samples of prior and local data. With the increasing size of local data, we can find the trends that our model becomes stabler and stabler. Also we can see our model performs better than existing model (LogisticHazard) in each case, but the difference decreases when the size of local data is large enough for existing model to train a satisfactory result.
 
 ![image](https://user-images.githubusercontent.com/48302151/162856554-2e5d4c7b-715b-4791-98a8-0882483064e0.png)
 
-## Code Details
-We have modified a small part of pycox for training deep learning model. So please make sure that the following steps are completed before running the [notebook][2].
-1. Change `LogisticHazard` in `logistic_hazard.py`:
-```diff
-def __init__(self, net, optimizer=None, device=None, duration_index=None, loss=None):
-    self.duration_index = duration_index
-    if loss is None:
-        loss = models.loss.NLLLogistiHazardLoss()
-+   if loss == "option":
-+       loss = models.loss.NewlyDefinedLoss()
-    super().__init__(net, loss, optimizer, device)
-```
-This is because the loss function is slightly changed for our project.
+## Tutorial
 
-2. Add class `NewlyDefinedLoss` in `loss.py`:
-
-```diff
-class NewlyDefinedLoss(_Loss):
-    def forward(self, phi: Tensor, combined_info: Tensor, idx_durations: Tensor, events: Tensor) -> Tensor:
-        return newly_defined_loss(phi, combined_info, idx_durations, events, self.reduction)
-```
-
-3. Add method `newly_defined_loss` in `loss.py`:
-
-```diff
-def newly_defined_loss(phi: Tensor, combined_info: Tensor, idx_durations: Tensor, events: Tensor,
-                        reduction: str = 'mean') -> Tensor:
-    if events.dtype is torch.bool:
-        events = events.float()
-    events = events.view(-1, 1)
-    idx_durations = idx_durations.view(-1, 1)
-    bce = F.binary_cross_entropy_with_logits(phi, combined_info, reduction='none')
-    loss = bce.cumsum(1).gather(1, idx_durations).view(-1)
-    return _reduction(loss, reduction)
-```
-
-Here is the diff between our loss function and `NLLLogistiHazardLoss`
-```diff
-def newly_defined_loss(phi: Tensor, combined_info: Tensor, idx_durations: Tensor, events: Tensor,
-                        reduction: str = 'mean') -> Tensor:
-
--   if phi.shape[1] <= idx_durations.max():
--       raise ValueError(f"Network output `phi` is too small for `idx_durations`." +
--                        f" Need at least `phi.shape[1] = {idx_durations.max().item() + 1}`," +
--                        f" but got `phi.shape[1] = {phi.shape[1]}`")
-    if events.dtype is torch.bool:
-        events = events.float()
-    events = events.view(-1, 1)
-    idx_durations = idx_durations.view(-1, 1)
--   y_bce = torch.zeros_like(phi).scatter(1, idx_durations, events)  # TODO: Data Expansion!
--   bce = F.binary_cross_entropy_with_logits(phi, y_bce, reduction='none')
-+   bce = F.binary_cross_entropy_with_logits(phi, combined_info, reduction='none')
-    loss = bce.cumsum(1).gather(1, idx_durations).view(-1)
-    return _reduction(loss, reduction)
-```
-
-where `combined_info` is the hazard function obtained from prior information.
+We have provided with 2 notebooks with interactive codes and results to show the way to train a prior model and use the results from trained prior model to train our model with local data.
 
 ## References
 [Di Wang, Wen Ye, Kevin He Proceedings of AAAI Spring Symposium on Survival Prediction - Algorithms, Challenges, and Applications 2021, PMLR 146:232-239, 2021.][3]
