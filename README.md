@@ -22,7 +22,7 @@ Although these two tutorials show two versions of prior model. The core of using
 
 ## Models and Evaluation Metrics
 
-We compare our model with [Cox model]([Python Code][8], [Model][9]) Deepsurv, [extended Cox model with case-control sampling][10] and [LogisticHazard][5]. We also use three evaluation metrics, which are Concordance-Index, Integrated Brier Score and Integrated Negative Binomial Log Likelihood. Except for Cox model, all codes are available from pycox. We appreciate the great convenience provided by this excellent package.
+We compare our model with Cox model([Python Code][8], [Model][9]) Deepsurv, [extended Cox model with case-control sampling][10] and [LogisticHazard][5]. We also use three evaluation metrics, which are Concordance-Index, Integrated Brier Score and Integrated Negative Binomial Log Likelihood. Except for Cox model, all codes are available from pycox. We appreciate the great convenience provided by this excellent package.
 
 ## References
 [1. Di Wang, Wen Ye, Kevin He Proceedings of AAAI Spring Symposium on Survival Prediction - Algorithms, Challenges, and Applications 2021, PMLR 146:232-239, 2021.][3]
@@ -30,6 +30,7 @@ We compare our model with [Cox model]([Python Code][8], [Model][9]) Deepsurv, [e
 [2. Kvamme H, Borgan Ø. Continuous and discrete-time survival prediction with neural networks. arXiv preprint arXiv:1910.06724. 2019 Oct 15.][5]
 
 [3. Kvamme H, Borgan Ø, Scheel I. Time-to-event prediction with neural networks and Cox regression. arXiv preprint arXiv:1907.00825. 2019 Jul 1.][10]
+
 [4. Cox, D. R. (1972). Regression models and life-tables. Journal of the Royal Statistical Society:
 Series B (Methodological), 34(2):187–202.][9]
 
