@@ -22,7 +22,7 @@ Although these two tutorials show two versions of prior model. The core of using
 
 ## Models and Evaluation Metrics
 
-We compare our model with [Cox model][8], Deepsurv, extended Cox model with case-control sampling and LogisticHazard. We also use three evaluation metrics, which are Concordance-Index, Integrated Brier Score and Integrated Negative Binomial Log Likelihood. Except for Cox model, all codes are available from pycox. We appreciate the great convenience provided by this excellent package.
+We compare our model with [Cox model][8], Deepsurv, extended Cox model with case-control sampling [1][3] and LogisticHazard [2][5]. We also use three evaluation metrics, which are Concordance-Index, Integrated Brier Score and Integrated Negative Binomial Log Likelihood. Except for Cox model, all codes are available from pycox. We appreciate the great convenience provided by this excellent package.
 
 ## References
 [Di Wang, Wen Ye, Kevin He Proceedings of AAAI Spring Symposium on Survival Prediction - Algorithms, Challenges, and Applications 2021, PMLR 146:232-239, 2021.][3]
