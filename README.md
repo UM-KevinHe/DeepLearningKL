@@ -22,7 +22,7 @@ Although these two tutorials show two versions of prior model. The core of using
 
 ## Models and Evaluation Metrics
 
-We compare our model with Cox model([Python Code][8], [Model][9]) Deepsurv, [extended Cox model with case-control sampling][10] and [LogisticHazard][5]. We also use three evaluation metrics, which are Concordance-Index, Integrated Brier Score and Integrated Negative Binomial Log Likelihood. Except for Cox model, all codes are available from pycox. We appreciate the great convenience provided by this excellent package.
+We compare our model with Cox model([Python Code][8], [Model][9]), [Deepsurv][11], [extended Cox model with case-control sampling][10] and [LogisticHazard][5]. We also use three evaluation metrics, which are Concordance-Index, Integrated Brier Score and Integrated Negative Binomial Log Likelihood. Except for Cox model, all codes are available from pycox. We appreciate the great convenience provided by this excellent package.
 
 ## References
 [1. Di Wang, Wen Ye, Kevin He Proceedings of AAAI Spring Symposium on Survival Prediction - Algorithms, Challenges, and Applications 2021, PMLR 146:232-239, 2021.][3]
@@ -34,6 +34,9 @@ We compare our model with Cox model([Python Code][8], [Model][9]) Deepsurv, [ext
 [4. Cox, D. R. (1972). Regression models and life-tables. Journal of the Royal Statistical Society:
 Series B (Methodological), 34(2):187–202.][9]
 
+[5. Deepsurv: personalized treatment recommender system using a cox proportional hazards deep
+neural network. BMC medical research methodology, 18(1):1–12.][11]
+
 [1]: https://github.com/havakv/pycox
 [2]: https://github.com/UM-KevinHe/DeepLearningKL/blob/main/Deep%20Learning%20with%20KL%20Divergence.ipynb
 [3]: http://proceedings.mlr.press/v146/wang21b/wang21b.pdf
@@ -44,3 +47,4 @@ Series B (Methodological), 34(2):187–202.][9]
 [8]: https://lifelines.readthedocs.io/en/latest/Quickstart.html
 [9]: http://www.biecek.pl/statystykamedyczna/cox.pdf
 [10]: https://www.jmlr.org/papers/volume20/18-424/18-424.pdf?ref=https://githubhelp.com
+[11]: https://bmcmedresmethodol.biomedcentral.com/track/pdf/10.1186/s12874-018-0482-1.pdf
