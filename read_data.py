@@ -2,6 +2,7 @@ import requests
 import zipfile
 import pandas as pd
 from data_simulation import SimStudyLinearPH, SimStudyNonLinearNonPH, SimStudyNonLinearPH
+from sklearn.preprocessing import LabelEncoder
 
 def support_data():
   url = "https://hbiostat.org/data/repo/support2csv.zip"
@@ -39,6 +40,16 @@ def support_data():
 
   support = support.drop(["age", "sex", "race", "num.co", "diabetes", "dementia", "ca", "meanbp", "hrt", "resp", "temp", "wblc", "sod", "crea", "death", "d.time", "aps"], axis = 1)
   support = support.reset_index(drop = True)
+
+  # creating instance of labelencoder
+  labelencoder = LabelEncoder()  # Assigning numerical values and storing in another column
+  support['x1'] = labelencoder.fit_transform(support['x1'])
+  support['x2'] = labelencoder.fit_transform(support['x2'])
+  support['x6'] = labelencoder.fit_transform(support['x6'])
+  # support['x14'] = labelencoder.fit_transform(support['x14'])
+
+  support = support.astype("float32")
+  support = support.astype({"duration": "int64", "event": "int32"})
 
   return support
 
