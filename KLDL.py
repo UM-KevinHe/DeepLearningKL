@@ -323,7 +323,7 @@ def prior_model_generation(data,
     data_prior_val = data.sample(frac=0.2)
     data_prior_train = data.drop(data_prior_val.index)
 
-    mapper = mapper_generation(cols_standardize=['x1', 'x2', 'x3'], leave = False)
+    mapper = mapper_generation(cols_standardize=['x1', 'x2', 'x3'])
     x_train = mapper.fit_transform(data_prior_train).astype('float32')
     x_val = mapper.transform(data_prior_val).astype('float32')
 
