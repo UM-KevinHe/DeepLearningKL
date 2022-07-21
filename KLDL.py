@@ -221,7 +221,7 @@ def cross_validation_eta(df_local, eta_list, model_prior,
             best_eta = eta
 
     print("CV ends")
-    return best_eta, df_test, x_test
+    return best_eta, df_train, df_test, x_test
 
 
 def model_generation(x_train, x_val, y_train, y_val, with_prior=True, eta=None, model_prior=None,
