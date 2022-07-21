@@ -63,6 +63,17 @@ class NewlyDefinedLoss(nn.Module):
     def forward(self, phi, x_train, idx_durations, events):
         return self.newly_defined_loss(phi, x_train, idx_durations, events)
 
+def cont_to_disc(data, labtrans = None, scheme = "quantiles", time_intervals = 20):
+    get_target = lambda df: (df['duration'].values, np.array(df['event'].values, dtype=np.float32))
+    if(labtrans == None):
+        labtrans = LogisticHazard.label_transform(time_intervals, scheme)
+        y_train = labtrans.fit_transform(*get_target(data))
+    else:
+        y_train = labtrans.transform(*get_target(data))
+
+    data["duration"] = y_train[0]
+    return data
+
 
 def hyperparameter_set_list(hidden_nodes=[32, 64, 128],
                             hidden_layers=[2, 3, 4],
