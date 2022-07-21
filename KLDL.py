@@ -75,7 +75,6 @@ def cont_to_disc(data, labtrans = None, scheme = "quantiles", time_intervals = 2
         data["duration"] = y_train[0]
         return data
 
-
 def hyperparameter_set_list(hidden_nodes=[32, 64, 128],
                             hidden_layers=[2, 3, 4],
                             batch_norm=[True, False],
