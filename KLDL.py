@@ -154,7 +154,7 @@ def cross_validation_eta(df_local, eta_list, model_prior,
     df_test = df_local.sample(frac=0.2)
     df_train = df_local.drop(df_test.index)
 
-    mapper = mapper_generation()
+    mapper = mapper_generation(['x1', 'x2', 'x3'])
     x_train = mapper.fit_transform(df_train).astype('float32')
     x_test = mapper.transform(df_test).astype('float32')
 
@@ -266,7 +266,7 @@ def model_generation(x_train, x_val, y_train, y_val, with_prior=True, eta=None, 
 
     net = tt.practical.MLPVanilla(in_features, num_nodes, out_features, batch_norm, dropout)
     if (with_prior == True):
-        loss = NewlyDefinedLoss(eta, model_prior)
+        loss = NewlyDefinedLoss(eta, model_prior, time_intervals)
         model = LogisticHazard(net, optimizer, loss=loss)
     else:
         model = LogisticHazard(net, optimizer)
