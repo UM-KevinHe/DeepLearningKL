@@ -81,24 +81,25 @@ def hyperparameter_set_list(hidden_nodes=[32, 64, 128],
     return set_list
 
 
-def mapper_generation(cols_standardize=None, cols_leave=None, standardize=True, leave=True):
-  """
-Used for Standardization of the data.
-It will be different for various datasets.
+def mapper_generation(cols_standardize=None, cols_leave=None):
+    """
+    Used for Standardization of the data.
+    It will be different for various datasets.
 
-Usage: Firstly fit_transform() for the training data, then apply it (transform()) on the testing data.
-"""
+    Usage: Firstly fit_transform() for the training data, then apply it (transform()) on the testing data.
+    """
 
-    if (standardize == True):
-        if (cols_standardize is None):
-            raise ValueError("You cannot set standardize True without specifying which cols you would like to operate")
-        else:
-            standardize_features = [([col], StandardScaler()) for col in cols_standardize]
-    if (leave == True):
-        if (cols_leave is None):
-            raise ValueError(
-                "You cannot set leave True without specifying which cols you would like to leave unchanged")
+    standardize = False
+    leave = False
+
+    if (cols_standardize is None and cols_leave is None):
+        raise ValueError("Please at least assign one kinds of data to be processed. Either standardize or leave")
+    if (cols_standardize is not None):
+        standardize_features = [([col], StandardScaler()) for col in cols_standardize]
+        standardize = True
+    if (cols_leave is not None):
         leave_features = [(col, None) for col in cols_leave]
+        leave = True
 
     if (standardize == True and leave == True):
         x_mapper_float = DataFrameMapper(standardize_features + leave_features)
@@ -107,7 +108,6 @@ Usage: Firstly fit_transform() for the training data, then apply it (transform()
     if (standardize == False and leave == True):
         x_mapper_float = DataFrameMapper(leave_features)
     if (standardize == False and leave == False):
-        raise ValueError("Please at least assign one kinds of data to be processed. Either standardize or leave")
 
     return x_mapper_float
 
@@ -137,7 +137,7 @@ def cross_validation_eta(df_local, eta_list, model_prior,
   epochs: epochs
   patience: The waiting steps used in earlystopping
   verbose: Whether you want to print out the logs for training
-  '''
+'''
 
     if (parameter_set == None):
         hidden_nodes = 32
@@ -324,7 +324,7 @@ def prior_model_generation(data,
     data_prior_val = data.sample(frac=0.2)
     data_prior_train = data.drop(data_prior_val.index)
 
-    mapper = mapper_generation()
+    mapper = mapper_generation(cols_standardize=['x1', 'x2', 'x3'], leave = False)
     x_train = mapper.fit_transform(data_prior_train).astype('float32')
     x_val = mapper.transform(data_prior_val).astype('float32')
 
