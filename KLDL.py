@@ -107,7 +107,6 @@ def mapper_generation(cols_standardize=None, cols_leave=None):
         x_mapper_float = DataFrameMapper(standardize_features)
     if (standardize == False and leave == True):
         x_mapper_float = DataFrameMapper(leave_features)
-    if (standardize == False and leave == False):
 
     return x_mapper_float
 
