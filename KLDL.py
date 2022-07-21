@@ -127,7 +127,7 @@ def cross_validation_eta(df_local, eta_list, model_prior,
   model_prior: The prior model used for generating prior information
   time_intervals: time points for the discrete model
   hidden_nodes: The number of hidden nodes for each layer
-  hidden_layer: The number of hidden layers
+  hidden_layers: The number of hidden layers
   batch_norm: Whether we use the batch normalization
   dropout: dropout rate
   learning_rate: learning rate
@@ -229,7 +229,7 @@ def model_generation(x_train, x_val, y_train, y_val, with_prior=True, eta=None, 
   model_prior: The prior model used for generating prior information
   time_intervals: time points for the discrete model
   hidden_nodes: The number of hidden nodes for each layer
-  hidden_layer: The number of hidden layers
+  hidden_layers: The number of hidden layers
   batch_norm: Whether we use the batch normalization
   dropout: dropout rate
   learning_rate: learning rate
@@ -261,7 +261,7 @@ def model_generation(x_train, x_val, y_train, y_val, with_prior=True, eta=None, 
     val = tt.tuplefy(x_val, y_val)
 
     in_features = x_train.shape[1]
-    num_nodes = [hidden_nodes for i in range(hidden_layer)]
+    num_nodes = [hidden_nodes for i in range(hidden_layers)]
     out_features = time_intervals
 
     net = tt.practical.MLPVanilla(in_features, num_nodes, out_features, batch_norm, dropout)
@@ -295,7 +295,7 @@ def prior_model_generation(data,
   data: prior_data
   time_intervals: time points for the discrete model
   hidden_nodes: The number of hidden nodes for each layer
-  hidden_layer: The number of hidden layers
+  hidden_layers: The number of hidden layers
   batch_norm: Whether we use the batch normalization
   dropout: dropout rate
   learning_rate: learning rate
