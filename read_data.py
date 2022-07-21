@@ -1,5 +1,6 @@
 import requests
 import zipfile
+import pandas as pd
 from data_simulation import SimStudyLinearPH, SimStudyNonLinearNonPH, SimStudyNonLinearPH
 
 def support_data():
