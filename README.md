@@ -3,8 +3,7 @@ This project is to train deep learning model in Survival Analysis. However, we a
 
 We have designed our own software and provided with a tutorial. For more information, see below.
 
-## Data
-## Real Datasets:
+## Data:
 <table>
     <tr>
         <th>Dataset</th>
@@ -12,6 +11,30 @@ We have designed our own software and provided with a tutorial. For more informa
         <th>Dataset</th>
         <th>Data source</th>
   </tr>
+     <tr>
+        <td>Simulation Data 1</td>
+        <td>10000</td>
+        <td>
+        Prior Data for Simulation 1 (Scheme 1), linear and proportional
+        </td>
+        <td><a href="https://github.com/jaredleekatzman/DeepSurv/tree/master/experiments/data">source</a>
+    </tr>
+    <tr>
+        <td>Simulation Data 2</td>
+        <td>10000</td>
+        <td>
+        Prior Data for Simulation 1 (Scheme 2), non linear and proportional
+        </td>
+        <td><a href="https://github.com/jaredleekatzman/DeepSurv/tree/master/experiments/data">source</a>
+    </tr>
+    <tr>
+        <td>Simulation Data 3</td>
+        <td>10000</td>
+        <td>
+        Prior and Local Data for Simulation 1 (Scheme 3), non linear and non proportional
+        </td>
+        <td><a href="https://github.com/jaredleekatzman/DeepSurv/tree/master/experiments/data">source</a>
+    </tr>
     <tr>
         <td>metabric</td>
         <td>1,904</td>
