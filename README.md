@@ -97,6 +97,7 @@ We have designed our own software and provided with a tutorial. For more informa
         <a href="https://nbviewer.jupyter.org/github/havakv/pycox/blob/master/examples/deephit_competing_risks.ipynb">competing</a></td>
     </tr>
 </table>
+
 ## Metrics
 <table>
     <tr>
