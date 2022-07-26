@@ -12,7 +12,7 @@ We have designed our own software and provided with a tutorial. For more informa
         <th>Data source</th>
   </tr>
      <tr>
-        <td>Simulation Data 1</td>
+         <td><b>Simulation Data 1</b></td>
         <td>10000</td>
         <td>
         Prior Data for Simulation 1 (Scheme 1), linear and proportional
@@ -20,7 +20,7 @@ We have designed our own software and provided with a tutorial. For more informa
         <td><a href="https://github.com/jaredleekatzman/DeepSurv/tree/master/experiments/data">source</a>
     </tr>
     <tr>
-        <td>Simulation Data 2</td>
+        <td><b>Simulation Data 2</b></td>
         <td>10000</td>
         <td>
         Prior Data for Simulation 1 (Scheme 2), non linear and proportional
@@ -28,7 +28,7 @@ We have designed our own software and provided with a tutorial. For more informa
         <td><a href="https://github.com/jaredleekatzman/DeepSurv/tree/master/experiments/data">source</a>
     </tr>
     <tr>
-        <td>Simulation Data 3</td>
+        <td><b>Simulation Data 3<b/></td>
         <td>10000(Prior)/300(Local)</td>
         <td>
         Prior and Local Data for Simulation 1 (Scheme 3), non linear and non proportional
