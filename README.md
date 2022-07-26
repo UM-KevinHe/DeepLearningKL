@@ -29,7 +29,7 @@ We have designed our own software and provided with a tutorial. For more informa
     </tr>
     <tr>
         <td>Simulation Data 3</td>
-        <td>10000</td>
+        <td>10000(Prior)/300(Local)</td>
         <td>
         Prior and Local Data for Simulation 1 (Scheme 3), non linear and non proportional
         </td>
