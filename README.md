@@ -1,5 +1,37 @@
 # DeepLearningKL
-This project is to train deep learning survival model with prior information, where KL divergence is used for incorporating. The code is modified based on [pycox][1], with the changes of loss function and the way to obtain necessary "prior information" used for it.
+This project is to train deep learning model in Survival Analysis. However, we allow user to incorporate prior information, which can be either statistical model or other neural networks. KL divergence is used for incorporating, which measures the difference between prior information and local information. The weights of prior and local information are selected by hyperparameter tuning and higher weights of prior model mean the model tends to believe more prior information than the local information, which means the quality local data may not be so satisfactory. Besides that, we also do an extension from single-risk to competing risk case, which means our software can also handle competing risk data.
+
+We have designed our own software and provided with a tutorial. For more information, see below.
+
+## Data
+## Real Datasets:
+<table>
+    <tr>
+        <th>Dataset</th>
+        <th>Size</th>
+        <th>Dataset</th>
+        <th>Data source</th>
+  </tr>
+    <tr>
+        <td>metabric</td>
+        <td>1,904</td>
+        <td>
+        The Molecular Taxonomy of Breast Cancer International Consortium (METABRIC).
+        See <a href="#references">[2]</a> for details.
+        </td>
+        <td><a href="https://github.com/jaredleekatzman/DeepSurv/tree/master/experiments/data">source</a>
+    </tr>
+    <tr>
+        <td>support</td>
+        <td>8,804</td>
+        <td>
+        Study to Understand Prognoses Preferences Outcomes and Risks of Treatment (SUPPORT).
+        See <a href="#references">[2]</a> for details.
+        </td>
+        <td><a href="https://github.com/jaredleekatzman/DeepSurv/tree/master/experiments/data">source</a>
+    </tr>
+</table>
+
 ## Core Idea
 Basically, we exploit the similarity of the loss function in discrete-time model and the KL divergence. Due to that reason it is really easy to find out how to compute the loss function and the way to unify two loss functions. For more details, see 2.1 [here][4].
 
