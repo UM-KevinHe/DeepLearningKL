@@ -55,7 +55,7 @@ We have designed our own software and provided with a tutorial. For more informa
     </tr>
     <tr>
         <td>MIMIC-3</td>
-        <td>35015</td>
+        <td>35304</td>
         <td>
         Deidentified clinical data of patients admitted to ICU stay.
         See <a href="#references">[2]</a> for details.
@@ -64,7 +64,7 @@ We have designed our own software and provided with a tutorial. For more informa
     </tr>
     <tr>
         <td>MIMIC-SEQ</td>
-        <td>35015</td>
+        <td>35304</td>
         <td>
         Deidentified clinical data of patients admitted to ICU stay (with many designed features related to time).
         See <a href="#references">[2]</a> for details.
