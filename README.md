@@ -1,7 +1,160 @@
 # DeepLearningKL
-This project is to train deep learning survival model with prior information, where KL divergence is used for incorporating. The code is modified based on [pycox][1], with the changes of loss function and the way to obtain necessary "prior information" used for it.
-## Core Idea
-Basically, we exploit the similarity of the loss function in discrete-time model and the KL divergence. Due to that reason it is really easy to find out how to compute the loss function and the way to unify two loss functions. For more details, see 2.1 [here][4].
+This project is to train deep learning model in Survival Analysis. However, we allow user to incorporate prior information, which can be either statistical model or other neural networks. KL divergence is used for incorporating, which measures the difference between prior information and local information. The weights of prior and local information are selected by hyperparameter tuning and higher weights of prior model mean the model tends to believe more prior information than the local information, which means the quality local data may not be so satisfactory. Besides that, we also do an extension from single-risk to competing risk case, which means our software can also handle competing risk data.
+
+We have designed our own software and provided with a tutorial. For more information, see below.
+
+## Data
+<table>
+    <tr>
+        <th>Dataset</th>
+        <th>Size</th>
+        <th>Dataset</th>
+        <th>Data source</th>
+  </tr>
+     <tr>
+         <td><b>Simulation Data 1</b></td>
+        <td>10000</td>
+        <td>
+        Prior Data for Simulation 1 (Scheme 1), linear and proportional
+        </td>
+        <td><a href="https://github.com/jaredleekatzman/DeepSurv/tree/master/experiments/data">source</a>
+    </tr>
+    <tr>
+        <td><b>Simulation Data 2</b></td>
+        <td>10000</td>
+        <td>
+        Prior Data for Simulation 1 (Scheme 2), non linear and proportional
+        </td>
+        <td><a href="https://github.com/jaredleekatzman/DeepSurv/tree/master/experiments/data">source</a>
+    </tr>
+    <tr>
+        <td><b>Simulation Data 3<b/></td>
+        <td>10000(Prior)/300(Local)</td>
+        <td>
+        Prior and Local Data for Simulation 1 (Scheme 3), non linear and non proportional
+        </td>
+        <td><a href="https://github.com/jaredleekatzman/DeepSurv/tree/master/experiments/data">source</a>
+    </tr>
+    <tr>
+        <td>metabric</td>
+        <td>1,904</td>
+        <td>
+        The Molecular Taxonomy of Breast Cancer International Consortium (METABRIC).
+        See <a href="#references">[2]</a> for details.
+        </td>
+        <td><a href="https://github.com/jaredleekatzman/DeepSurv/tree/master/experiments/data">source</a>
+    </tr>
+    <tr>
+        <td><b>support</b></td>
+        <td>8,804</td>
+        <td>
+        Study to Understand Prognoses Preferences Outcomes and Risks of Treatment (SUPPORT).
+        See <a href="#references">[2]</a> for details.
+        </td>
+        <td><a href="https://github.com/jaredleekatzman/DeepSurv/tree/master/experiments/data">source</a>
+    </tr>
+    <tr>
+        <td><b>MIMIC-3</b></td>
+        <td>35304</td>
+        <td>
+        Deidentified clinical data of patients admitted to ICU stay.
+        See <a href="#references">[2]</a> for details.
+        </td>
+        <td><a href="https://github.com/jaredleekatzman/DeepSurv/tree/master/experiments/data">source</a>
+    </tr>
+    <tr>
+        <td><b>MIMIC-SEQ</b></td>
+        <td>35304</td>
+        <td>
+        Deidentified clinical data of patients admitted to ICU stay (with many designed features related to time).
+        See <a href="#references">[2]</a> for details.
+        </td>
+        <td><a href="https://github.com/jaredleekatzman/DeepSurv/tree/master/experiments/data">source</a>
+    </tr>
+</table>
+
+## Models
+<table>
+    <tr>
+        <th>Method</th>
+        <th>Description</th>
+        <th>Example</th>
+    </tr>
+    <tr>
+        <td><b>KLDL-S/KLDL-C</b></td>
+        <td>
+        Our model, which requires prior information (model)
+        </td>
+        <td><a href="https://nbviewer.jupyter.org/github/havakv/pycox/blob/master/examples/01_introduction.ipynb">notebook</a>
+        </td>
+    </tr>
+    <tr>
+        <td><b>KLDL-L<b/></td>
+        <td>
+        Our model, with manually defined 3 link functions as an option of parameter, used when the data shows some statistical properties.
+        </td>
+        <td><a href="https://nbviewer.jupyter.org/github/havakv/pycox/blob/master/examples/01_introduction.ipynb">notebook</a>
+        </td>
+    </tr>
+    <tr>
+        <td>LogisticHazard (Nnet-survival)</td>
+        <td>
+        The Logistic-Hazard method parametrize the discrete hazards and optimize the survival likelihood <a href="#references">[12]</a> <a href="#references">[7]</a>.
+        It is also called Partial Logistic Regression <a href="#references">[13]</a> and Nnet-survival <a href="#references">[8]</a>.
+        </td>
+        <td><a href="https://nbviewer.jupyter.org/github/havakv/pycox/blob/master/examples/01_introduction.ipynb">notebook</a>
+        </td>
+    </tr>
+    <tr>
+        <td>PMF</td>
+        <td>
+        The PMF method parametrize the probability mass function (PMF) and optimize the survival likelihood <a href="#references">[12]</a>. It is the foundation of methods such as DeepHit and MTLR.
+        </td>
+        <td><a href="https://nbviewer.jupyter.org/github/havakv/pycox/blob/master/examples/pmf.ipynb">notebook</a>
+        </td>
+    </tr>
+    <tr>
+        <td>DeepHit, DeepHitSingle</td>
+        <td>
+        DeepHit is a PMF method with a loss for improved ranking that 
+        can handle competing risks <a href="#references">[3]</a>.
+        </td>
+        <td><a href="https://nbviewer.jupyter.org/github/havakv/pycox/blob/master/examples/deephit.ipynb">single</a>
+        <a href="https://nbviewer.jupyter.org/github/havakv/pycox/blob/master/examples/deephit_competing_risks.ipynb">competing</a></td>
+    </tr>
+</table>
+
+## Metrics
+<table>
+    <tr>
+        <th>Metric</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>concordance_td (antolini)</td>
+        <td>
+        The time-dependent concordance index evaluated at the event times <a href="#references">[4]</a>.
+        </td>
+    </tr>
+    <tr>
+        <td><b>concordance_td (Uno)</b></td>
+        <td>
+        The time-dependent concordance index evaluated at the event times with truncation <a href="#references">[4]</a>.
+        </td>
+    </tr>
+    <tr>
+        <td>integrated_brier_score</td>
+        <td>
+        The integrated IPCW Brier score. Numerical integration of the `brier_score` <a href="#references">[5]</a><a href="#references">[6]</a>.
+        </td>
+    </tr>
+    <tr>
+        <td>integrated_nbll</td>
+        <td>
+        The integrated IPCW (negative) binomial log-likelihood. Numerical integration of the `nbll` <a href="#references">[5]</a><a href="#references">[1]</a>.
+        </td>
+    </tr>
+</table>
 
 ## Real Data Result: Visualization
 This is one comparison result that trained on [SUPPORT][7] data, we sample most of the data as prior data and the remaining data are used as local data. The prior data will be used to train a prior model and we obtain the estimated hazard rates from this prior model. The estimated hazard rates will be used to compute the value of our loss function and the model will be trained based on this loss function with only local data. For other models, only local data is accessible. 
@@ -21,10 +174,6 @@ We have provided with 3 notebooks with interactive codes and results to show the
 3. Tutorial 3: Identifying the Quality of Prior with Cross Validation: For this tutorial notebook, we will do similar data-preprocessing on SUPPORT, but we will modify some parts of the prior data to generate different prior models with different prior data. We will show **how to identify the quality of our prior model with the aid of multiple experiments and Cross Validation**. Basically, higher hyperparameter value means higher quality of prior data, since higher hyperparameter value means higher of the weight for prior data in the loss function.
 
 Although these 3 tutorials show different versions of prior model. The core of using our model is to make sure the hazard rates matrix can be obtained with n be the number of observations (number of rows for this matrix) and K be the number of time intervals of discrete-time model (number of cols). We recommend users to begin with either Tutorial 1 or 2, we provide them with the same amount of details for users, respectively. For tutorial 3, since our goal is more advanced, we will omit some explanation words and refer users to previous tutorials.
-
-## Models and Evaluation Metrics
-
-We compare our model with Cox model([Python Code][8], [Model][9]), [Deepsurv][11], [extended Cox model with case-control sampling][10] and [LogisticHazard][5]. We also use three evaluation metrics, which are Concordance-Index, Integrated Brier Score and Integrated Negative Binomial Log Likelihood. Except for Cox model, all codes are available from pycox. We appreciate the great convenience provided by this excellent package.
 
 ## References
 [1. Di Wang, Wen Ye, Kevin He Proceedings of AAAI Spring Symposium on Survival Prediction - Algorithms, Challenges, and Applications 2021, PMLR 146:232-239, 2021.][3]
