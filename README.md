@@ -45,7 +45,7 @@ We have designed our own software and provided with a tutorial. For more informa
         <td><a href="https://github.com/jaredleekatzman/DeepSurv/tree/master/experiments/data">source</a>
     </tr>
     <tr>
-        <td>**support**</td>
+        <td><b>support</b></td>
         <td>8,804</td>
         <td>
         Study to Understand Prognoses Preferences Outcomes and Risks of Treatment (SUPPORT).
@@ -54,7 +54,7 @@ We have designed our own software and provided with a tutorial. For more informa
         <td><a href="https://github.com/jaredleekatzman/DeepSurv/tree/master/experiments/data">source</a>
     </tr>
     <tr>
-        <td>**MIMIC-3**</td>
+        <td><b>MIMIC-3</b></td>
         <td>35304</td>
         <td>
         Deidentified clinical data of patients admitted to ICU stay.
@@ -63,7 +63,7 @@ We have designed our own software and provided with a tutorial. For more informa
         <td><a href="https://github.com/jaredleekatzman/DeepSurv/tree/master/experiments/data">source</a>
     </tr>
     <tr>
-        <td>**MIMIC-SEQ**</td>
+        <td><b>MIMIC-SEQ</b></td>
         <td>35304</td>
         <td>
         Deidentified clinical data of patients admitted to ICU stay (with many designed features related to time).
@@ -81,7 +81,7 @@ We have designed our own software and provided with a tutorial. For more informa
         <th>Example</th>
     </tr>
     <tr>
-        <td>**KLDL-S/KLDL-C**</td>
+        <td><b>KLDL-S/KLDL-C</b></td>
         <td>
         Our model, which requires prior information (model)
         </td>
@@ -89,7 +89,7 @@ We have designed our own software and provided with a tutorial. For more informa
         </td>
     </tr>
     <tr>
-        <td>**KLDL-L**</td>
+        <td><b>KLDL-L<b/></td>
         <td>
         Our model, with manually defined 3 link functions as an option of parameter, used when the data shows some statistical properties.
         </td>
@@ -137,7 +137,7 @@ We have designed our own software and provided with a tutorial. For more informa
         </td>
     </tr>
     <tr>
-        <td>**concordance_td (Uno)**</td>
+        <td><b>concordance_td (Uno)</b></td>
         <td>
         The time-dependent concordance index evaluated at the event times with truncation <a href="#references">[4]</a>.
         </td>
