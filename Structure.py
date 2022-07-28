@@ -90,9 +90,6 @@ class MLPProportional(nn.Module):
         net = []
         for n_in, n_out, p in zip(num_nodes[:-1], num_nodes[1:], dropout):
             net.append(DenseVanillaBlock(n_in, n_out, True, batch_norm, p, activation, w_init_))
-        net.append(nn.Linear(num_nodes[-1], out_features, output_bias))
-        if output_activation:
-            net.append(output_activation)
         # New
         net.append(DenseProportionalBlock(num_nodes[-1]))
         net.append(ProportionalBlock(out_features, option))
