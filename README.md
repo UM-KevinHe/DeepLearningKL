@@ -168,12 +168,12 @@ We have designed our own software and provided with a tutorial. For more informa
         </td>
     </tr>
     <tr>
-        <td>Random Search</td>
+        <td>**Random Search**</td>
         <td>
         </td>
     </tr>
     <tr>
-        <td>Sobel Sequence</td>
+        <td>**Sobel Sequence**</td>
         <td>
         </td>
     </tr>
