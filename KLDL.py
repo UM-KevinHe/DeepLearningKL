@@ -11,6 +11,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import torch  # For building the networks
 import torchtuples as tt  # Some useful functions
+import Structure
 
 # For preprocessing
 from sklearn.preprocessing import StandardScaler
@@ -35,13 +36,15 @@ best_eta_list = []
 
 
 class NewlyDefinedLoss(nn.Module):
-    def __init__(self, eta, model, time_intervals):
+    def __init__(self, eta, model, time_intervals, option = None):
         super().__init__()
         self.eta = eta
         self.model = model
         self.time_intervals = time_intervals
+        self.option = option
 
     def newly_defined_loss(self, phi, x_train, idx_durations, events):
+        option = self.option
         prior_info_train = self.model.predict_hazard(x_train)
 
         time = idx_durations.cpu()
@@ -56,12 +59,41 @@ class NewlyDefinedLoss(nn.Module):
             events = events.float()
         events = events.view(-1, 1)
         idx_durations = idx_durations.view(-1, 1)
-        bce = F.binary_cross_entropy_with_logits(phi, combined_info, reduction='none')
+        if (option is None):
+            bce = F.binary_cross_entropy_with_logits(phi, combined_info, reduction='none')
+        else:
+            bce = nn.BCELoss(phi, combined_info, reduction='none')
         loss = bce.cumsum(1).gather(1, idx_durations).view(-1)
         return loss.mean()
 
     def forward(self, phi, x_train, idx_durations, events):
         return self.newly_defined_loss(phi, x_train, idx_durations, events)
+
+class NewlyDefinedLoss2(nn.Module):
+    def __init__(self, option = None):
+        super().__init__()
+        self.option = option
+
+    def nll_logistic_hazard(self, phi, idx_durations, events):
+        option = self.option
+        if phi.shape[1] <= idx_durations.max():
+            raise ValueError(f"Network output `phi` is too small for `idx_durations`." +
+                             f" Need at least `phi.shape[1] = {idx_durations.max().item() + 1}`," +
+                             f" but got `phi.shape[1] = {phi.shape[1]}`")
+        if events.dtype is torch.bool:
+            events = events.float()
+        events = events.view(-1, 1)
+        idx_durations = idx_durations.view(-1, 1)
+        y_bce = torch.zeros_like(phi).scatter(1, idx_durations, events)
+        if option is None:
+            bce = F.binary_cross_entropy_with_logits(phi, y_bce, reduction='none')
+        else:
+            bce = nn.BCELoss(phi, y_bce, reduction='none')
+        loss = bce.cumsum(1).gather(1, idx_durations).view(-1)
+        return loss.mean()
+
+    def forward(self, phi, idx_durations, events):
+        return self.nll_logistic_hazard(phi, idx_durations, events)
 
 def cont_to_disc(data, labtrans = None, scheme = "quantiles", time_intervals = 20):
     get_target = lambda df: (df['duration'].values, np.array(df['event'].values, dtype=np.float32))
@@ -230,7 +262,8 @@ def model_generation(x_train, x_val, y_train, y_val, with_prior=True, eta=None, 
                      optimizer=tt.optim.Adam(),
                      epochs=512,
                      patience=5,
-                     verbose=False):
+                     verbose=False,
+                     option = None):
     '''
   Generate a model with or without the aid of prior information
 
@@ -274,13 +307,16 @@ def model_generation(x_train, x_val, y_train, y_val, with_prior=True, eta=None, 
     in_features = x_train.shape[1]
     num_nodes = [hidden_nodes for i in range(hidden_layers)]
     out_features = time_intervals
-
-    net = tt.practical.MLPVanilla(in_features, num_nodes, out_features, batch_norm, dropout)
+    if option is None:
+        net = tt.practical.MLPVanilla(in_features, num_nodes, out_features, batch_norm, dropout)
+    else:
+        net = Structure.MLPProportional(in_features, num_nodes, out_features, batch_norm, dropout, option=option)
     if (with_prior == True):
-        loss = NewlyDefinedLoss(eta, model_prior, time_intervals)
+        loss = NewlyDefinedLoss(eta, model_prior, time_intervals, option)
         model = LogisticHazard(net, optimizer, loss=loss)
     else:
-        model = LogisticHazard(net, optimizer)
+        loss = NewlyDefinedLoss2(eta, model_prior, time_intervals, option)
+        model = LogisticHazard(net, optimizer, loss=loss)
 
     model.optimizer.set_lr(learning_rate)
 
