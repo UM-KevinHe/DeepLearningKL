@@ -88,7 +88,7 @@ class NewlyDefinedLoss2(nn.Module):
         if option is None:
             bce = F.binary_cross_entropy_with_logits(phi, y_bce, reduction='none')
         else:
-            bce = nn.BCELoss(phi, y_bce, reduction='none')
+            bce = F.binary_cross_entropy(phi, y_bce, reduction='none')
         loss = bce.cumsum(1).gather(1, idx_durations).view(-1)
         return loss.mean()
 
