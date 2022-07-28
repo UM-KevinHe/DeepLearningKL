@@ -315,7 +315,7 @@ def model_generation(x_train, x_val, y_train, y_val, with_prior=True, eta=None, 
         loss = NewlyDefinedLoss(eta, model_prior, time_intervals, option)
         model = LogisticHazard(net, optimizer, loss=loss)
     else:
-        loss = NewlyDefinedLoss2(eta, model_prior, time_intervals, option)
+        loss = NewlyDefinedLoss2(option)
         model = LogisticHazard(net, optimizer, loss=loss)
 
     model.optimizer.set_lr(learning_rate)
