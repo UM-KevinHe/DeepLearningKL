@@ -170,13 +170,11 @@ We have designed our own software and provided with a tutorial. For more informa
     <tr>
         <td>Random Search</td>
         <td>
-        
         </td>
     </tr>
     <tr>
         <td>Sobel Sequence</td>
         <td>
-        
         </td>
     </tr>
 </table>
