@@ -69,6 +69,7 @@ class NewlyDefinedLoss(nn.Module):
     def forward(self, phi, x_train, idx_durations, events):
         return self.newly_defined_loss(phi, x_train, idx_durations, events)
 
+
 class NewlyDefinedLoss2(nn.Module):
     def __init__(self, option = None):
         super().__init__()
@@ -161,6 +162,8 @@ def cross_validation_eta(df_local, eta_list, model_prior,
                          optimizer=tt.optim.Adam(),
                          epochs=512,
                          patience=5,
+                         n_splits=5,
+                         metric="C-index",
                          verbose=False):
     '''
   Do Cross Validation and select the best eta with only local data
@@ -194,6 +197,10 @@ def cross_validation_eta(df_local, eta_list, model_prior,
         learning_rate = parameter_set['learning_rate']
         batch_size = parameter_set['batch_size']
 
+    if metric not in ['C-index', 'IBS', 'IBLL']:
+        raise ValueError("Please provide with a metric used to do hyperparameter tuning, which should be one of ["
+                         "'C-index', 'IBS', 'IBLL']")
+
     df_test = df_local.sample(frac=0.2)
     df_train = df_local.drop(df_test.index)
 
@@ -205,7 +212,7 @@ def cross_validation_eta(df_local, eta_list, model_prior,
     durations_test, events_test = get_target(df_test)
 
     # Begin create the CV sets
-    kf = KFold(n_splits=5)  # Define the split - into 2 folds
+    kf = KFold(n_splits=n_splits)  # Define the split - into 2 folds
     kf.get_n_splits(df_train)  # returns the number of splitting iterations in the cross-validator
 
     best_eta = 0
@@ -231,7 +238,7 @@ def cross_validation_eta(df_local, eta_list, model_prior,
             y_train = (x_train, data_local_train['duration'].values, data_local_train['event'].values)
             y_val = (x_val, data_local_val['duration'].values, data_local_val['event'].values)
 
-            model = model_generation(x_train, x_val, y_train, y_val, eta=eta, model_prior=model_prior)
+            model = model_generation(x_train, x_val, y_train, y_val, eta=eta, model_prior=model_prior, parameter_set=parameter_set)
 
             concordance_td, integrated_brier_score, integrated_nbll = evaluation_metrics(x_test, durations_test,
                                                                                          events_test,
@@ -242,14 +249,27 @@ def cross_validation_eta(df_local, eta_list, model_prior,
             integrated_nbll_list_CV.append(integrated_nbll)
 
         print("eta: ", eta)
-        print(concordance_td_list_CV)
-        Concordance_index = sum(concordance_td_list_CV) / len(concordance_td_list_CV)
-        integrated_brier_score = sum(integrated_brier_score_list_CV) / len(integrated_brier_score_list_CV)
-        print(Concordance_index)
-        # integrated_nbll = sum(integrated_nbll_list_CV) / len(integrated_nbll_list_CV)
-        if (best_concordance < Concordance_index):
-            best_concordance = Concordance_index
-            best_eta = eta
+        if metric == "C-index":
+            print(concordance_td_list_CV)
+            Concordance_index = sum(concordance_td_list_CV) / len(concordance_td_list_CV)
+            print(Concordance_index)
+            if best_concordance < Concordance_index:
+                best_concordance = Concordance_index
+                best_eta = eta
+        elif metric == "IBS":
+            print(integrated_brier_score_list_CV)
+            integrated_brier_score = sum(integrated_brier_score_list_CV) / len(integrated_brier_score_list_CV)
+            print(integrated_brier_score)
+            if best_ibs > integrated_brier_score:
+                best_ibs = integrated_brier_score
+                best_eta = eta
+        elif metric == "IBLL":
+            print(integrated_nbll_list_CV)
+            integrated_nbll = sum(integrated_nbll_list_CV) / len(integrated_nbll_list_CV)
+            print(integrated_nbll)
+            if best_ibll > integrated_nbll:
+                best_ibll = integrated_nbll
+                best_eta = eta
 
     print("CV ends")
     return best_eta, df_train, df_test, x_test
