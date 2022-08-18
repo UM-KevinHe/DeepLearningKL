@@ -345,7 +345,7 @@ def model_generation(x_train, x_val, y_train, y_val, with_prior=True, eta=None, 
     log = model.fit(x_train, y_train, batch_size, epochs, callbacks, verbose,
                     val_data=val)
 
-    return model, log
+    return model
 
 
 def prior_model_generation(data,
