@@ -38,7 +38,7 @@ class ProportionalBlock(torch.nn.Module):
             return input
         elif (option == "log"):
             input = input + torch.log(torch.sigmoid(self.a))
-            input = torch.exp(input)
+            input = torch.nn.Softplus(input)
             return input
         elif (option == "logit"):
             return torch.sigmoid(input + self.a)
