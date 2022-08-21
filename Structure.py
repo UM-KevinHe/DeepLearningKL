@@ -86,7 +86,7 @@ class MLPProportional(nn.Module):
     def __init__(self, in_features, num_nodes, out_features, batch_norm=True, dropout=None, activation=nn.ReLU,
                  output_activation=None, output_bias=True,
                  w_init_=lambda w: nn.init.kaiming_normal_(w, nonlinearity='relu'), option=None):
-        if option not in ['log-log', 'log', 'logit']:
+        if option not in ['log-log', 'log', 'logit', 'log-log-2']:
             raise ValueError("Please provide with a link function, it should be one of ['log-log', 'log', 'logit']")
         super().__init__()
         num_nodes = tuplefy(in_features, num_nodes).flatten()

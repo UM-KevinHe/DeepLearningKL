@@ -238,7 +238,7 @@ def cross_validation_eta(df_local, eta_list, model_prior,
             y_train = (x_train, data_local_train['duration'].values, data_local_train['event'].values)
             y_val = (x_val, data_local_val['duration'].values, data_local_val['event'].values)
 
-            model = model_generation(x_train, x_val, y_train, y_val, eta=eta, model_prior=model_prior, parameter_set=parameter_set)
+            model, _ = model_generation(x_train, x_val, y_train, y_val, eta=eta, model_prior=model_prior, parameter_set=parameter_set)
 
             concordance_td, integrated_brier_score, integrated_nbll = evaluation_metrics(x_test, durations_test,
                                                                                          events_test,
@@ -345,7 +345,7 @@ def model_generation(x_train, x_val, y_train, y_val, with_prior=True, eta=None, 
     log = model.fit(x_train, y_train, batch_size, epochs, callbacks, verbose,
                     val_data=val)
 
-    return model
+    return model, log
 
 
 def prior_model_generation(data,
@@ -398,7 +398,7 @@ def prior_model_generation(data,
     y_train = get_target(data_prior_train)
     y_val = get_target(data_prior_val)
 
-    model_prior = model_generation(x_train, x_val, y_train, y_val, with_prior = False, parameter_set = parameter_set, verbose = verbose)
+    model_prior, _ = model_generation(x_train, x_val, y_train, y_val, with_prior = False, parameter_set = parameter_set, verbose = verbose)
 
     return model_prior
 
