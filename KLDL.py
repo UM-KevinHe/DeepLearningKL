@@ -400,7 +400,7 @@ def prior_model_generation(data,
     y_train = get_target(data_prior_train)
     y_val = get_target(data_prior_val)
 
-    model_prior, _ = model_generation(x_train, x_val, y_train, y_val, with_prior = False, parameter_set = parameter_set, verbose = verbose)
+    model_prior, _ = model_generation(x_train, x_val, y_train, y_val, with_prior = False, parameter_set = parameter_set, verbose = verbose, time_intervals=time_intervals)
 
     return model_prior
 
