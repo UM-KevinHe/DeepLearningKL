@@ -91,26 +91,26 @@ def sim_event_times(mnist, max_time=365):
     return event_times, ~censored
 
 
-def image_data():
-    transform = transforms.Compose(
-        [transforms.ToTensor(),
-         transforms.Normalize((0.1307,), (0.3081,))]
-    )
-    mnist_train = datasets.MNIST('.', train=True, download=True,
-                                 transform=transform)
-    mnist_test = datasets.MNIST('.', train=False, transform=transform)
-
-    sim_train = sim_event_times(mnist_train)
-    sim_test = sim_event_times(mnist_test)
-
-    list1 = [i for i in range(60000)]
-    index = sample(list1, 30000)
-
-    img = [mnist_train[i][0] for i in index]
-    img = torch.stack(img)
-    sim_train_subset = (sim_train[0][index], sim_train[1][index])
-
-    labtrans = LogisticHazard.label_transform(20)
-    target_train = labtrans.fit_transform(*sim_train_subset)
-
-    return img, *target_train
+# def image_data():
+#     transform = transforms.Compose(
+#         [transforms.ToTensor(),
+#          transforms.Normalize((0.1307,), (0.3081,))]
+#     )
+#     mnist_train = datasets.MNIST('.', train=True, download=True,
+#                                  transform=transform)
+#     mnist_test = datasets.MNIST('.', train=False, transform=transform)
+#
+#     sim_train = sim_event_times(mnist_train)
+#     sim_test = sim_event_times(mnist_test)
+#
+#     list1 = [i for i in range(60000)]
+#     index = sample(list1, 30000)
+#
+#     img = [mnist_train[i][0] for i in index]
+#     img = torch.stack(img)
+#     sim_train_subset = (sim_train[0][index], sim_train[1][index])
+#
+#     labtrans = LogisticHazard.label_transform(20)
+#     target_train = labtrans.fit_transform(*sim_train_subset)
+#
+#     return img, *target_train
