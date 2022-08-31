@@ -241,7 +241,7 @@ def cross_validation_eta(df_local, eta_list, model_prior,
             y_train = (x_train, data_local_train['duration'].values, data_local_train['event'].values)
             y_val = (x_val, data_local_val['duration'].values, data_local_val['event'].values)
 
-            model, _ = model_generation(x_train, x_val, y_train, y_val, eta=eta, model_prior=model_prior, parameter_set=parameter_set)
+            model, _ = model_generation(x_train, x_val, y_train, y_val, eta=eta, model_prior=model_prior, parameter_set=parameter_set, time_intervals=time_intervals)
 
             concordance_td, integrated_brier_score, integrated_nbll = evaluation_metrics(x_test, durations_test,
                                                                                          events_test,
