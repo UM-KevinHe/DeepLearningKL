@@ -165,7 +165,8 @@ def cross_validation_eta(df_local, eta_list, model_prior,
                          n_splits=5,
                          metric="C-index",
                          verbose=False,
-                         cols_standardize=None):
+                         cols_standardize=None,
+                         cols_leave=None):
     '''
   Do Cross Validation and select the best eta with only local data
 
@@ -207,7 +208,7 @@ def cross_validation_eta(df_local, eta_list, model_prior,
 
     if cols_standardize == None:
         cols_standardize = ['x1', 'x2', 'x3']
-    mapper = mapper_generation(cols_standardize=cols_standardize)
+    mapper = mapper_generation(cols_standardize=cols_standardize, cols_leave=cols_leave)
     x_train = mapper.fit_transform(df_train).astype('float32')
     x_test = mapper.transform(df_test).astype('float32')
 
