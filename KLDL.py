@@ -359,7 +359,8 @@ def prior_model_generation(data,
                            epochs=512,
                            patience=5,
                            verbose=False,
-                           cols_standardize=None):
+                           cols_standardize=None,
+                           cols_leave=None):
     '''
   Generate a model used for prior information.
 
@@ -395,7 +396,7 @@ def prior_model_generation(data,
     data_prior_train = data.drop(data_prior_val.index)
     if cols_standardize == None:
         cols_standardize = ['x1', 'x2', 'x3']
-    mapper = mapper_generation(cols_standardize=cols_standardize)
+    mapper = mapper_generation(cols_standardize=cols_standardize, cols_leave=cols_leave)
     x_train = mapper.fit_transform(data_prior_train).astype('float32')
     x_val = mapper.transform(data_prior_val).astype('float32')
 
