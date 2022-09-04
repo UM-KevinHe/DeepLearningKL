@@ -345,7 +345,7 @@ def model_generation(x_train, x_val, y_train, y_val, with_prior=True, eta=None, 
             model = LogisticHazard(net, optimizer, loss=loss)
     else:
         if Model == "DeepHit":
-            model = DeepHitSingle(net, optimizer, alpha=0.5, sigma=0.1)
+            model = DeepHitSingle(net, optimizer, alpha=1, sigma=0.1)
         if Model == "PMF":
             model = PMF(net, optimizer)
 
