@@ -20,7 +20,7 @@ from sklearn_pandas import DataFrameMapper
 from pycox.datasets import metabric
 from pycox.models import LogisticHazard
 # from pycox.models import PMF
-# from pycox.models import DeepHitSingle
+from pycox.models import DeepHitSingle
 from pycox.evaluation import EvalSurv
 
 concordance_td_list_1 = []
@@ -287,7 +287,8 @@ def model_generation(x_train, x_val, y_train, y_val, with_prior=True, eta=None, 
                      epochs=512,
                      patience=5,
                      verbose=False,
-                     option = None):
+                     option=None,
+                     Model=None):
     '''
   Generate a model with or without the aid of prior information
 
@@ -335,12 +336,16 @@ def model_generation(x_train, x_val, y_train, y_val, with_prior=True, eta=None, 
         net = tt.practical.MLPVanilla(in_features, num_nodes, out_features, batch_norm, dropout)
     else:
         net = Structure.MLPProportional(in_features, num_nodes, out_features, batch_norm, dropout, option=option)
-    if (with_prior == True):
-        loss = NewlyDefinedLoss(eta, model_prior, time_intervals, option)
-        model = LogisticHazard(net, optimizer, loss=loss)
+    if Model is None:
+        if (with_prior == True):
+            loss = NewlyDefinedLoss(eta, model_prior, time_intervals, option)
+            model = LogisticHazard(net, optimizer, loss=loss)
+        else:
+            loss = NewlyDefinedLoss2(option)
+            model = LogisticHazard(net, optimizer, loss=loss)
     else:
-        loss = NewlyDefinedLoss2(option)
-        model = LogisticHazard(net, optimizer, loss=loss)
+        if Model == "DeepHit":
+            model = DeepHitSingle(net, optimizer, alpha=0.2, sigma=0.1)
 
     model.optimizer.set_lr(learning_rate)
 
