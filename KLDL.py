@@ -20,6 +20,7 @@ from sklearn_pandas import DataFrameMapper
 from pycox.datasets import metabric
 from pycox.models import LogisticHazard
 from pycox.models import PMF
+from pycox.models import MTLR
 from pycox.models import DeepHitSingle
 from pycox.evaluation import EvalSurv
 
@@ -348,6 +349,8 @@ def model_generation(x_train, x_val, y_train, y_val, with_prior=True, eta=None, 
             model = DeepHitSingle(net, optimizer, alpha=1, sigma=0.1)
         if Model == "PMF":
             model = PMF(net, optimizer)
+        if Model == "MTLR":
+            model = MTLR(net, optimizer)
 
     model.optimizer.set_lr(learning_rate)
 
