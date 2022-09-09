@@ -37,7 +37,7 @@ best_eta_list = []
 
 
 class NewlyDefinedLoss(nn.Module):
-    def __init__(self, eta, model, time_intervals, option = None):
+    def __init__(self, eta, model, time_intervals, option=None):
         super().__init__()
         self.eta = eta
         self.model = model
@@ -72,7 +72,7 @@ class NewlyDefinedLoss(nn.Module):
 
 
 class NewlyDefinedLoss2(nn.Module):
-    def __init__(self, option = None):
+    def __init__(self, option=None):
         super().__init__()
         self.option = option
 
@@ -97,9 +97,10 @@ class NewlyDefinedLoss2(nn.Module):
     def forward(self, phi, idx_durations, events):
         return self.nll_logistic_hazard(phi, idx_durations, events)
 
-def cont_to_disc(data, labtrans = None, scheme = "quantiles", time_intervals = 20):
+
+def cont_to_disc(data, labtrans=None, scheme="quantiles", time_intervals=20):
     get_target = lambda df: (df['duration'].values, np.array(df['event'].values, dtype=np.float32))
-    if(labtrans == None):
+    if (labtrans == None):
         labtrans = LogisticHazard.label_transform(time_intervals, scheme)
         y_train = labtrans.fit_transform(*get_target(data))
         data["duration"] = y_train[0]
@@ -108,6 +109,7 @@ def cont_to_disc(data, labtrans = None, scheme = "quantiles", time_intervals = 2
         y_train = labtrans.transform(*get_target(data))
         data["duration"] = y_train[0]
         return data
+
 
 def hyperparameter_set_list(hidden_nodes=[32, 64, 128],
                             hidden_layers=[2, 3, 4],
@@ -167,7 +169,9 @@ def cross_validation_eta(df_local, eta_list, model_prior,
                          metric="C-index",
                          verbose=False,
                          cols_standardize=None,
-                         cols_leave=None):
+                         cols_leave=None,
+                         cols_standardize_prior=None,
+                         cols_leave_prior=None):
     '''
   Do Cross Validation and select the best eta with only local data
 
@@ -213,6 +217,15 @@ def cross_validation_eta(df_local, eta_list, model_prior,
     x_train = mapper.fit_transform(df_train).astype('float32')
     x_test = mapper.transform(df_test).astype('float32')
 
+    # Difference: The mapper will differ in the columns, but applying on the same data
+    # to adapt to the difference in the columns for prior and local model
+
+    if cols_standardize_prior == None:
+        cols_standardize_prior = cols_standardize.copy()
+    mapper_prior = mapper_generation(cols_standardize=cols_standardize_prior, cols_leave=cols_leave_prior)
+    x_train_prior = mapper_prior.fit_transform(df_train).astype('float32')
+    x_test_prior = mapper_prior.transform(df_test).astype('float32')
+
     get_target = lambda df: (df['duration'].values, np.array(df['event'].values, dtype=np.float32))
     durations_test, events_test = get_target(df_test)
 
@@ -240,10 +253,14 @@ def cross_validation_eta(df_local, eta_list, model_prior,
             x_train = mapper.transform(data_local_train).astype('float32')
             x_val = mapper.transform(data_local_val).astype('float32')
 
-            y_train = (x_train, data_local_train['duration'].values, data_local_train['event'].values)
-            y_val = (x_val, data_local_val['duration'].values, data_local_val['event'].values)
+            x_train_prior = mapper_prior.transform(data_local_train).astype('float32')
+            x_val_prior = mapper_prior.transform(data_local_val).astype('float32')
 
-            model, _ = model_generation(x_train, x_val, y_train, y_val, eta=eta, model_prior=model_prior, parameter_set=parameter_set, time_intervals=time_intervals)
+            y_train = (x_train_prior, data_local_train['duration'].values, data_local_train['event'].values)
+            y_val = (x_val_prior, data_local_val['duration'].values, data_local_val['event'].values)
+
+            model, _ = model_generation(x_train, x_val, y_train, y_val, eta=eta, model_prior=model_prior,
+                                        parameter_set=parameter_set, time_intervals=time_intervals)
 
             concordance_td, integrated_brier_score, integrated_nbll = evaluation_metrics(x_test, durations_test,
                                                                                          events_test,
@@ -415,7 +432,8 @@ def prior_model_generation(data,
     y_train = get_target(data_prior_train)
     y_val = get_target(data_prior_val)
 
-    model_prior, _ = model_generation(x_train, x_val, y_train, y_val, with_prior = False, parameter_set = parameter_set, verbose = verbose, time_intervals=time_intervals)
+    model_prior, _ = model_generation(x_train, x_val, y_train, y_val, with_prior=False, parameter_set=parameter_set,
+                                      verbose=verbose, time_intervals=time_intervals)
 
     return model_prior
 
