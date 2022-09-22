@@ -78,14 +78,14 @@ We have designed our own software and provided with a <a href="https://github.co
     <tr>
         <th>Method</th>
         <th>Description</th>
-        <th>Example</th>
+        <th>Paper Source</th>
     </tr>
     <tr>
         <td><b>KLDL-S/KLDL-C</b></td>
         <td>
-        Our model, which requires prior information (model)
+        Our model, which requires prior information (model). S means single risk, C means competing risk.
         </td>
-        <td><a href="https://nbviewer.jupyter.org/github/havakv/pycox/blob/master/examples/01_introduction.ipynb">notebook</a>
+        <td>Section 3.3 in 
         </td>
     </tr>
     <tr>
@@ -210,6 +210,7 @@ Series B (Methodological), 34(2):187–202.][9]
 
 [5. Deepsurv: personalized treatment recommender system using a cox proportional hazards deep
 neural network. BMC medical research methodology, 18(1):1–12.][11]
+[6. Liu L, Fang X, Wang D, Tang W, He K. KL-divergence Based Deep Learning for Discrete Time Model. arXiv preprint arXiv:2208.05100. 2022 Aug 10.][12]
 
 [1]: https://github.com/havakv/pycox
 [2]: https://github.com/UM-KevinHe/DeepLearningKL/blob/main/Deep%20Learning%20with%20KL%20Divergence.ipynb
@@ -222,3 +223,4 @@ neural network. BMC medical research methodology, 18(1):1–12.][11]
 [9]: http://www.biecek.pl/statystykamedyczna/cox.pdf
 [10]: https://www.jmlr.org/papers/volume20/18-424/18-424.pdf?ref=https://githubhelp.com
 [11]: https://bmcmedresmethodol.biomedcentral.com/track/pdf/10.1186/s12874-018-0482-1.pdf
+[12]: https://arxiv.org/abs/2208.05100
