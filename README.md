@@ -66,7 +66,7 @@ We have designed our own software and provided with a <a href="https://github.co
         <td>35304</td>
         <td>
         Deidentified clinical data of patients admitted to ICU stay (with time series features).
-        See <a href="#references">[2]</a> for details.
+        See <a href="#references">[10]</a> for details.
         </td>
         <td>Private Data</td>
     </tr>
