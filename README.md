@@ -153,6 +153,14 @@ We have designed our own software and provided with a <a href="https://github.co
         </td>
     </tr>
 </table>
+## Simulation Result: visualization
+
+40000 individuals are sampled and 2% of them are used for local data, while the other 98% are prior data. $x_1, x_2$ are two covariates in $x, y$-axis, respectively. The average predicted survival value ($1 - \bar \lambda(t; \mathbf Z)$) for each time point is on $z$-axis and the color demonstrates the value with the sidebar as a legend on the right. The first graph (from left to right) is the truth, which is the relationship between two covariates of individuals and true survival values visualized as an ellipse. The second graph is the predicted survival values trained by LogisticHazard with only prior data. Since the size of it is large, the result differs not too much from the truth. The third graph is the predicted survival values trained by LogisticHazard with only local data, this result is unsatisfactory due to the small size of data. The fourth graph is the results for our model, combining local data and prior information. The result looks much more reasonable compared with the third graph, with a more accurate range of predicted values and also a more regular ellipse shape.
+
+![Simulation_2_true](https://user-images.githubusercontent.com/48302151/191780765-93c073ad-aa6f-4589-8b61-b2378121146e.png)
+![Simulation_2_prior](https://user-images.githubusercontent.com/48302151/191780742-11ae271d-0169-4dce-9009-01f780e65f0c.png)
+![Simulation_2_local](https://user-images.githubusercontent.com/48302151/191780710-228fcae0-4bb0-4a45-b3b5-06959c27b78a.png)
+![Simulation_2_KL](https://user-images.githubusercontent.com/48302151/191780659-3ef2d029-db44-4dc3-a90e-a50575ae06cf.png)
 
 ## Real Data Result: Visualization
 This is one comparison result that trained on MIMIC-3 data, we sample most of the data as prior data and the remaining data are used as local data. The prior data will be used to train a prior model and we obtain the estimated hazard rates from this prior model. The estimated hazard rates will be used to compute the value of our loss function and the model will be trained based on this loss function with only local data. For other models, only local data is accessible. Note that only part of the features will be selected out as those in the prior model, which means the prior information is imperfect.
