@@ -138,7 +138,7 @@ We have designed our own software and provided with a <a href="https://github.co
     <tr>
         <td><b>concordance_td (Uno)</b></td>
         <td>
-        The time-dependent concordance index evaluated at the event times with truncation <a href="#references">[4]</a>.
+        The time-dependent concordance index evaluated at the event times with truncation <a href="#references">[9]</a>.
         </td>
     </tr>
     <tr>
