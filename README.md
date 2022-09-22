@@ -46,10 +46,9 @@ We have designed our own software and provided with a <a href="https://github.co
     </tr>
     <tr>
         <td><b>support</b></td>
-        <td>8,804</td>
+        <td>8,873</td>
         <td>
-        Study to Understand Prognoses Preferences Outcomes and Risks of Treatment (SUPPORT).
-        See <a href="#references">[2]</a> for details.
+        Study to Understand Prognoses Preferences Outcomes and Risks of Treatment (SUPPORT), we transfer it to discrete outcomes with a threshold based on its setting. See <a href="#references">[2]</a> for details.
         </td>
         <td><code>read_data.support_data()</code></td>
     </tr>
