@@ -181,6 +181,8 @@ neural network. BMC medical research methodology, 18(1):1–12.][11]
 
 [8. Purushotham S, Meng C, Che Z, Liu Y. Benchmarking deep learning models on large healthcare datasets. Journal of biomedical informatics. 2018 Jul 1;83:112-34.][14]
 
+[9. Uno H, Cai T, Pencina MJ, D'Agostino RB, Wei LJ. On the C-statistics for evaluating overall adequacy of risk prediction procedures with censored survival data. Stat Med. 2011 May 10;30(10):1105-17. doi: 10.1002/sim.4154. Epub 2011 Jan 13. PMID: 21484848; PMCID: PMC3079915.][15]
+
 
 [1]: https://github.com/havakv/pycox
 [2]: https://github.com/UM-KevinHe/DeepLearningKL/blob/main/Deep%20Learning%20with%20KL%20Divergence.ipynb
@@ -196,3 +198,4 @@ neural network. BMC medical research methodology, 18(1):1–12.][11]
 [12]: https://arxiv.org/abs/2208.05100
 [13]: https://www.acpjournals.org/doi/full/10.7326/0003-4819-122-3-199502010-00007
 [14]: https://www.sciencedirect.com/science/article/pii/S1532046418300716
+[15]: https://pubmed.ncbi.nlm.nih.gov/21484848/
