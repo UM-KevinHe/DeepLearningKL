@@ -42,7 +42,7 @@ We have designed our own software and provided with a tutorial. For more informa
         The Molecular Taxonomy of Breast Cancer International Consortium (METABRIC).
         See <a href="#references">[2]</a> for details.
         </td>
-        <td>`read_data.metabric_data()`</td>
+        <td><code>read_data.metabric_data()</code></td>
     </tr>
     <tr>
         <td><b>support</b></td>
@@ -51,7 +51,7 @@ We have designed our own software and provided with a tutorial. For more informa
         Study to Understand Prognoses Preferences Outcomes and Risks of Treatment (SUPPORT).
         See <a href="#references">[2]</a> for details.
         </td>
-        <td>`read_data.support_data()`</td>
+        <td><code>read_data.support_data()</code></td>
     </tr>
     <tr>
         <td><b>MIMIC-3</b></td>
