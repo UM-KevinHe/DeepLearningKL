@@ -156,9 +156,9 @@ We have designed our own software and provided with a <a href="https://github.co
 </table>
 
 ## Real Data Result: Visualization
-This is one comparison result that trained on [SUPPORT][7] data, we sample most of the data as prior data and the remaining data are used as local data. The prior data will be used to train a prior model and we obtain the estimated hazard rates from this prior model. The estimated hazard rates will be used to compute the value of our loss function and the model will be trained based on this loss function with only local data. For other models, only local data is accessible. 
+This is one comparison result that trained on MIMIC-3 data, we sample most of the data as prior data and the remaining data are used as local data. The prior data will be used to train a prior model and we obtain the estimated hazard rates from this prior model. The estimated hazard rates will be used to compute the value of our loss function and the model will be trained based on this loss function with only local data. For other models, only local data is accessible. Note that only part of the features will be selected out as those in the prior model, which means the prior information is imperfect.
 
-The experiments are done 50 times with different samples of prior and local data. With the increasing size of local data, we can find the trends that our model becomes stabler and stabler. Also we can see our model performs better than existing model (LogisticHazard) in each case, but the difference decreases when the size of local data is large enough for existing model to train a satisfactory result.
+The experiments are done 50 times with different samples of prior and local data. With the increasing size of local data, we can find the trends that our model becomes stabler and stabler. Also we can see our model performs better than existing models. Especially when the ratio for local data is 20\%, the result is even better than LogisticHazard trained on the prior data, which means our model has the potential to achieve an extraordinary prediction result with a moderate size of data at the case when the prior information is imperfect.
 
 ![Real_Data_MIMIC_1_Imperfect](https://user-images.githubusercontent.com/48302151/191658962-dc53d9d2-dedb-4706-92a6-60e4e1c53498.png)
 
