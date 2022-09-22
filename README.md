@@ -60,7 +60,7 @@ We have designed our own software and provided with a tutorial. For more informa
         Deidentified clinical data of patients admitted to ICU stay.
         See <a href="#references">[2]</a> for details.
         </td>
-        <td><a href="https://github.com/jaredleekatzman/DeepSurv/tree/master/experiments/data">source</a>
+        <td> Private Data</td>
     </tr>
     <tr>
         <td><b>MIMIC-SEQ</b></td>
@@ -69,7 +69,7 @@ We have designed our own software and provided with a tutorial. For more informa
         Deidentified clinical data of patients admitted to ICU stay (with many designed features related to time).
         See <a href="#references">[2]</a> for details.
         </td>
-        <td><a href="https://github.com/jaredleekatzman/DeepSurv/tree/master/experiments/data">source</a>
+        <td>Private Data</td>
     </tr>
 </table>
 
