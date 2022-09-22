@@ -17,7 +17,7 @@ We have designed our own software and provided with a <a href="https://github.co
         <td>
         Prior Data for Simulation 1 (Scheme 1), linear and proportional
         </td>
-        <td><a href="https://github.com/jaredleekatzman/DeepSurv/tree/master/experiments/data">source</a>
+         <td><code>read_data.simulation_data(option="linear ph", n=10000)</code></td>
     </tr>
     <tr>
         <td><b>Simulation Data 2</b></td>
@@ -25,7 +25,7 @@ We have designed our own software and provided with a <a href="https://github.co
         <td>
         Prior Data for Simulation 1 (Scheme 2), non linear and proportional
         </td>
-        <td><a href="https://github.com/jaredleekatzman/DeepSurv/tree/master/experiments/data">source</a>
+        <td><code>read_data.simulation_data(option="non linear ph", n=10000)</code></td>
     </tr>
     <tr>
         <td><b>Simulation Data 3<b/></td>
@@ -33,7 +33,7 @@ We have designed our own software and provided with a <a href="https://github.co
         <td>
         Prior and Local Data for Simulation 1 (Scheme 3), non linear and non proportional
         </td>
-        <td><a href="https://github.com/jaredleekatzman/DeepSurv/tree/master/experiments/data">source</a>
+        <td><code>read_data.simulation_data(option="non linear non ph", n=10000)</code></td>
     </tr>
     <tr>
         <td>metabric</td>
