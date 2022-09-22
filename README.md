@@ -78,7 +78,7 @@ We have designed our own software and provided with a <a href="https://github.co
     <tr>
         <th>Method</th>
         <th>Description</th>
-        <th>Paper Source</th>
+        <th>Source</th>
     </tr>
     <tr>
         <td><b>KLDL-S/KLDL-C</b></td>
@@ -93,7 +93,7 @@ We have designed our own software and provided with a <a href="https://github.co
         <td>
         Our model, with manually defined 3 link functions as an option of parameter, used when the data shows some statistical properties.
         </td>
-        <td><a href="https://nbviewer.jupyter.org/github/havakv/pycox/blob/master/examples/01_introduction.ipynb">notebook</a>
+        <td>Section 3.2.3 in <a href="#references">[6]</a>
         </td>
     </tr>
     <tr>
