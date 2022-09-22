@@ -160,7 +160,7 @@ This is one comparison result that trained on [SUPPORT][7] data, we sample most 
 
 The experiments are done 50 times with different samples of prior and local data. With the increasing size of local data, we can find the trends that our model becomes stabler and stabler. Also we can see our model performs better than existing model (LogisticHazard) in each case, but the difference decreases when the size of local data is large enough for existing model to train a satisfactory result.
 
-![Real Data graph 1](https://user-images.githubusercontent.com/48302151/173245243-4c8eed5a-3923-46fe-8ea3-eabc446c9147.png)
+![Real_Data_MIMIC_1_Imperfect](https://user-images.githubusercontent.com/48302151/191658962-dc53d9d2-dedb-4706-92a6-60e4e1c53498.png)
 
 ## References
 [1. Di Wang, Wen Ye, Kevin He Proceedings of AAAI Spring Symposium on Survival Prediction - Algorithms, Challenges, and Applications 2021, PMLR 146:232-239, 2021.][3]
