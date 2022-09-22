@@ -210,6 +210,7 @@ Series B (Methodological), 34(2):187–202.][9]
 
 [5. Deepsurv: personalized treatment recommender system using a cox proportional hazards deep
 neural network. BMC medical research methodology, 18(1):1–12.][11]
+
 [6. Liu L, Fang X, Wang D, Tang W, He K. KL-divergence Based Deep Learning for Discrete Time Model. arXiv preprint arXiv:2208.05100. 2022 Aug 10.][12]
 
 [1]: https://github.com/havakv/pycox
