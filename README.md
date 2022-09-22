@@ -1,7 +1,7 @@
 # DeepLearningKL
 This project is to train deep learning model in Survival Analysis. However, we allow user to incorporate prior information, which can be either statistical model or other neural networks. KL divergence is used for incorporating, which measures the difference between prior information and local information. The weights of prior and local information are selected by hyperparameter tuning and higher weights of prior model mean the model tends to believe more prior information than the local information, which means the quality local data may not be so satisfactory. Besides that, we also do an extension from single-risk to competing risk case, which means our software can also handle competing risk data.
 
-We have designed our own software and provided with a tutorial. For more information, see below.
+We have designed our own software and provided with a <a href="https://github.com/UM-KevinHe/DeepLearningKL/blob/main/Software_Tutorial.ipynb">tutorial</a>. For more information, see below.
 
 ## Data
 <table>
