@@ -9,7 +9,7 @@ We have designed our own software and provided with a <a href="https://github.co
         <th>Dataset</th>
         <th>Size</th>
         <th>Dataset</th>
-        <th>Data source</th>
+        <th>Data source/Generation Code</th>
   </tr>
      <tr>
          <td><b>Simulation Data 1</b></td>
