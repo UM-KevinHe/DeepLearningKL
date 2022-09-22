@@ -213,6 +213,7 @@ neural network. BMC medical research methodology, 18(1):1–12.][11]
 
 [6. Liu L, Fang X, Wang D, Tang W, He K. KL-divergence Based Deep Learning for Discrete Time Model. arXiv preprint arXiv:2208.05100. 2022 Aug 10.][12]
 
+
 [1]: https://github.com/havakv/pycox
 [2]: https://github.com/UM-KevinHe/DeepLearningKL/blob/main/Deep%20Learning%20with%20KL%20Divergence.ipynb
 [3]: http://proceedings.mlr.press/v146/wang21b/wang21b.pdf
