@@ -200,6 +200,8 @@ neural network. BMC medical research methodology, 18(1):1–12.][11]
 
 [6. Liu L, Fang X, Wang D, Tang W, He K. KL-divergence Based Deep Learning for Discrete Time Model. arXiv preprint arXiv:2208.05100. 2022 Aug 10.][12]
 
+[7. Knaus WA, Harrell FE, Lynn J, Goldman L, Phillips RS, Connors AF, Dawson NV, Fulkerson WJ, Califf RM, Desbiens N, Layde P. The SUPPORT prognostic model: Objective estimates of survival for seriously ill hospitalized adults. Annals of internal medicine. 1995 Feb 1;122(3):191-203.][13]
+
 
 [1]: https://github.com/havakv/pycox
 [2]: https://github.com/UM-KevinHe/DeepLearningKL/blob/main/Deep%20Learning%20with%20KL%20Divergence.ipynb
@@ -213,3 +215,4 @@ neural network. BMC medical research methodology, 18(1):1–12.][11]
 [10]: https://www.jmlr.org/papers/volume20/18-424/18-424.pdf?ref=https://githubhelp.com
 [11]: https://bmcmedresmethodol.biomedcentral.com/track/pdf/10.1186/s12874-018-0482-1.pdf
 [12]: https://arxiv.org/abs/2208.05100
+[13]: https://www.acpjournals.org/doi/full/10.7326/0003-4819-122-3-199502010-00007
