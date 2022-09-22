@@ -56,7 +56,7 @@ We have designed our own software and provided with a <a href="https://github.co
         <td><b>MIMIC-3</b></td>
         <td>35304</td>
         <td>
-        Deidentified clinical data of patients admitted to ICU stay.
+        Deidentified clinical data of patients admitted to ICU stay. The version follows 
         See <a href="#references">[2]</a> for details.
         </td>
         <td> Private Data</td>
@@ -65,7 +65,7 @@ We have designed our own software and provided with a <a href="https://github.co
         <td><b>MIMIC-SEQ</b></td>
         <td>35304</td>
         <td>
-        Deidentified clinical data of patients admitted to ICU stay (with many designed features related to time).
+        Deidentified clinical data of patients admitted to ICU stay (with time series features).
         See <a href="#references">[2]</a> for details.
         </td>
         <td>Private Data</td>
@@ -202,6 +202,8 @@ neural network. BMC medical research methodology, 18(1):1–12.][11]
 
 [7. Knaus WA, Harrell FE, Lynn J, Goldman L, Phillips RS, Connors AF, Dawson NV, Fulkerson WJ, Califf RM, Desbiens N, Layde P. The SUPPORT prognostic model: Objective estimates of survival for seriously ill hospitalized adults. Annals of internal medicine. 1995 Feb 1;122(3):191-203.][13]
 
+[8. Purushotham S, Meng C, Che Z, Liu Y. Benchmarking deep learning models on large healthcare datasets. Journal of biomedical informatics. 2018 Jul 1;83:112-34.][14]
+
 
 [1]: https://github.com/havakv/pycox
 [2]: https://github.com/UM-KevinHe/DeepLearningKL/blob/main/Deep%20Learning%20with%20KL%20Divergence.ipynb
@@ -216,3 +218,4 @@ neural network. BMC medical research methodology, 18(1):1–12.][11]
 [11]: https://bmcmedresmethodol.biomedcentral.com/track/pdf/10.1186/s12874-018-0482-1.pdf
 [12]: https://arxiv.org/abs/2208.05100
 [13]: https://www.acpjournals.org/doi/full/10.7326/0003-4819-122-3-199502010-00007
+[14]: https://www.sciencedirect.com/science/article/pii/S1532046418300716
