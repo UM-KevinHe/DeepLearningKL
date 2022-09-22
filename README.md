@@ -100,7 +100,7 @@ We have designed our own software and provided with a <a href="https://github.co
         <td>LogisticHazard (Nnet-survival)</td>
         <td>
         The Logistic-Hazard method parametrize the discrete hazards and optimize the survival likelihood <a href="#references">[12]</a> <a href="#references">[7]</a>.
-        It is also called Partial Logistic Regression <a href="#references">[13]</a> and Nnet-survival <a href="#references">[8]</a>.
+        It is also called [Partial Logistic Regression][13] and [Nnet-survival][8].
         </td>
         <td><a href="https://nbviewer.jupyter.org/github/havakv/pycox/blob/master/examples/01_introduction.ipynb">notebook</a>
         </td>
