@@ -155,29 +155,6 @@ We have designed our own software and provided with a <a href="https://github.co
     </tr>
 </table>
 
-## Hyperparameter Tuning
-<table>
-    <tr>
-        <th>Metric</th>
-        <th>Description</th>
-    </tr>
-    <tr>
-        <td>Grid Search</td>
-        <td>
-        </td>
-    </tr>
-    <tr>
-        <td><b>Random Search</b></td>
-        <td>
-        </td>
-    </tr>
-    <tr>
-        <td><b>Sobel Sequence</b></td>
-        <td>
-        </td>
-    </tr>
-</table>
-
 ## Real Data Result: Visualization
 This is one comparison result that trained on [SUPPORT][7] data, we sample most of the data as prior data and the remaining data are used as local data. The prior data will be used to train a prior model and we obtain the estimated hazard rates from this prior model. The estimated hazard rates will be used to compute the value of our loss function and the model will be trained based on this loss function with only local data. For other models, only local data is accessible. 
 
