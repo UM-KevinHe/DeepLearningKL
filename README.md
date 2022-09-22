@@ -85,7 +85,7 @@ We have designed our own software and provided with a <a href="https://github.co
         <td>
         Our model, which requires prior information (model). S means single risk, C means competing risk.
         </td>
-        <td>Section 3.3 in 
+        <td>Section 3.3 in <a href="#references">[6]</a>
         </td>
     </tr>
     <tr>
