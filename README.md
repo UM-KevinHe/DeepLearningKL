@@ -56,8 +56,7 @@ We have designed our own software and provided with a <a href="https://github.co
         <td><b>MIMIC-3</b></td>
         <td>35304</td>
         <td>
-        Deidentified clinical data of patients admitted to ICU stay. The version follows 
-        See <a href="#references">[8]</a> for details.
+        Deidentified clinical data of patients admitted to ICU stay. The version follows <a href="#references">[8]</a>.
         </td>
         <td> Private Data</td>
     </tr>
