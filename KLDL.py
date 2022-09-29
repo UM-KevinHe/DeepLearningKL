@@ -297,6 +297,7 @@ def cross_validation_eta(df_local, eta_list, model_prior,
     return best_eta, df_train, df_test, x_test, x_test_prior
 
 
+
 def model_generation(x_train, x_val, y_train, y_val, with_prior=True, eta=None, model_prior=None,
                      parameter_set=None,
                      time_intervals=20,
