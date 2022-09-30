@@ -110,6 +110,8 @@ def hyperparameter_set_list(hidden_nodes=None,
                             batch_size=None,
                             dropout=None,
                             optimizer=None,
+                            alpha=None,  # Specially designed for DeepHit
+                            sigma=None,  # Specially designed for DeepHit
                             ):
     if optimizer is None:
         optimizer = [tt.optim.Adam()]
@@ -125,6 +127,10 @@ def hyperparameter_set_list(hidden_nodes=None,
         hidden_nodes = [32, 64, 128]
     if dropout is None:
         dropout = [0, 0.1, 0.25]
+    if alpha is None:
+        alpha = [1]
+    if sigma is None:
+        sigma = [0.1]
 
     set_list = []
     for a in hidden_nodes:
@@ -134,10 +140,12 @@ def hyperparameter_set_list(hidden_nodes=None,
                     for e in batch_size:
                         for f in dropout:
                             for g in optimizer:
-                                hyperparameter_set = {"hidden_nodes": a, "hidden_layers": b, "batch_norm": c,
-                                                      "learning_rate": d, "batch_size": e, "dropout": f,
-                                                      "optimizer": g}
-                                set_list.append(hyperparameter_set)
+                                for h in alpha:
+                                    for i in sigma:
+                                        hyperparameter_set = {"hidden_nodes": a, "hidden_layers": b, "batch_norm": c,
+                                                              "learning_rate": d, "batch_size": e, "dropout": f,
+                                                              "optimizer": g, "alpha": h, "sigma": i}
+                                        set_list.append(hyperparameter_set)
     return set_list
 
 
@@ -181,8 +189,10 @@ def cross_validation_eta(df_local, eta_list, model_prior,
                          verbose=False,
                          cols_standardize=None,
                          cols_leave=None,
+                         cols_categorical=None,
                          cols_standardize_prior=None,
-                         cols_leave_prior=None):
+                         cols_leave_prior=None,
+                         cols_categorical_prior=None):
     """
   Do Cross Validation and select the best eta with only local data
 
@@ -205,7 +215,7 @@ def cross_validation_eta(df_local, eta_list, model_prior,
     if parameter_set is None:
         parameter_set = {"hidden_nodes": 32, "hidden_layers": 2, "batch_norm": True,
                          "learning_rate": 0.01, "batch_size": 32, "dropout": 0.1,
-                         "optimizer": tt.optim.Adam()}
+                         "optimizer": tt.optim.Adam(), "alpha": 1}
 
     if metric not in ['C-index', 'IBS', 'INBLL']:
         raise ValueError("Please provide with a metric used to do hyperparameter tuning, which should be one of ["
@@ -216,7 +226,8 @@ def cross_validation_eta(df_local, eta_list, model_prior,
 
     if cols_standardize is None:
         cols_standardize = ['x1', 'x2', 'x3']
-    mapper = mapper_generation(cols_standardize=cols_standardize, cols_leave=cols_leave)
+    mapper = mapper_generation(cols_standardize=cols_standardize, cols_leave=cols_leave,
+                               cols_categorical=cols_categorical)
     _ = mapper.fit_transform(df_train).astype('float32')
     x_test = mapper.transform(df_test).astype('float32')
 
@@ -225,7 +236,8 @@ def cross_validation_eta(df_local, eta_list, model_prior,
 
     if cols_standardize_prior is None:
         cols_standardize_prior = cols_standardize.copy()
-    mapper_prior = mapper_generation(cols_standardize=cols_standardize_prior, cols_leave=cols_leave_prior)
+    mapper_prior = mapper_generation(cols_standardize=cols_standardize_prior, cols_leave=cols_leave_prior,
+                                     cols_categorical=cols_categorical_prior)
     _ = mapper_prior.fit_transform(df_train).astype('float32')
     x_test_prior = mapper_prior.transform(df_test).astype('float32')
 
@@ -250,8 +262,8 @@ def cross_validation_eta(df_local, eta_list, model_prior,
         for train_index, test_index in kf.split(df_train):
             data_local_train_index = train_index
             data_local_val_index = test_index
-            data_local_train = df_train.iloc[data_local_train_index, ]
-            data_local_val = df_train.iloc[data_local_val_index, ]
+            data_local_train = df_train.iloc[data_local_train_index,]
+            data_local_val = df_train.iloc[data_local_val_index,]
 
             x_train = mapper.transform(data_local_train).astype('float32')
             x_val = mapper.transform(data_local_val).astype('float32')
@@ -337,6 +349,7 @@ def model_generation(x_train, x_val, y_train, y_val, with_prior=True, eta=None, 
         batch_size = 32
         dropout = 0.1
         optimizer = tt.optim.Adam()
+        alpha = 1
     else:
         hidden_nodes = parameter_set["hidden_nodes"]
         hidden_layers = parameter_set['hidden_layers']
@@ -345,6 +358,7 @@ def model_generation(x_train, x_val, y_train, y_val, with_prior=True, eta=None, 
         batch_size = parameter_set['batch_size']
         dropout = parameter_set['dropout']
         optimizer = parameter_set['optimizer']
+        alpha = parameter_set['alpha']
 
     if with_prior:
         if (eta is None) or (model_prior is None):
@@ -368,7 +382,7 @@ def model_generation(x_train, x_val, y_train, y_val, with_prior=True, eta=None, 
             model = LogisticHazard(net, optimizer, loss=loss)
     else:
         if Model == "DeepHit":
-            model = DeepHitSingle(net, optimizer, alpha=1, sigma=0.1)
+            model = DeepHitSingle(net, optimizer, alpha=alpha, sigma=0.1)
         if Model == "PMF":
             model = PMF(net, optimizer)
         if Model == "MTLR":
