@@ -10,6 +10,7 @@ import Structure
 # For preprocessing
 from sklearn.preprocessing import StandardScaler
 from sklearn_pandas import DataFrameMapper
+from sklearn.preprocessing import OneHotEncoder
 
 from pycox.datasets import metabric
 from pycox.models import LogisticHazard
@@ -140,7 +141,7 @@ def hyperparameter_set_list(hidden_nodes=None,
     return set_list
 
 
-def mapper_generation(cols_standardize=None, cols_leave=None):
+def mapper_generation(cols_standardize=None, cols_leave=None, cols_categorical=None):
     """
     Used for Standardization of the data.
     It will be different for various datasets.
@@ -151,21 +152,21 @@ def mapper_generation(cols_standardize=None, cols_leave=None):
     standardize = False
     leave = False
 
-    if cols_standardize is None and cols_leave is None:
-        raise ValueError("Please at least assign one kinds of data to be processed. Either standardize or leave")
+    standardize_features = []
+    leave_features = []
+    categorical_features = []
+
+    if cols_standardize is None and cols_leave is None and cols_categorical is None:
+        raise ValueError("Please at least assign one kinds of data to be processed. Either standardize, categorical "
+                         "or leave")
     if cols_standardize is not None:
         standardize_features = [([col], StandardScaler()) for col in cols_standardize]
-        standardize = True
     if cols_leave is not None:
         leave_features = [(col, None) for col in cols_leave]
-        leave = True
+    if cols_categorical is not None:
+        categorical_features = [([col], OneHotEncoder()) for col in cols_categorical]
 
-    if standardize == True and leave == True:
-        x_mapper_float = DataFrameMapper(standardize_features + leave_features)
-    if standardize == True and leave == False:
-        x_mapper_float = DataFrameMapper(standardize_features)
-    if standardize == False and leave == True:
-        x_mapper_float = DataFrameMapper(leave_features)
+    x_mapper_float = DataFrameMapper(standardize_features + leave_features + categorical_features)
 
     return x_mapper_float
 
@@ -249,8 +250,8 @@ def cross_validation_eta(df_local, eta_list, model_prior,
         for train_index, test_index in kf.split(df_train):
             data_local_train_index = train_index
             data_local_val_index = test_index
-            data_local_train = df_train.iloc[data_local_train_index,]
-            data_local_val = df_train.iloc[data_local_val_index,]
+            data_local_train = df_train.iloc[data_local_train_index, ]
+            data_local_val = df_train.iloc[data_local_val_index, ]
 
             x_train = mapper.transform(data_local_train).astype('float32')
             x_val = mapper.transform(data_local_val).astype('float32')
@@ -298,7 +299,6 @@ def cross_validation_eta(df_local, eta_list, model_prior,
 
     print("CV ends")
     return best_eta, df_train, df_test, x_test, x_test_prior
-
 
 
 def model_generation(x_train, x_val, y_train, y_val, with_prior=True, eta=None, model_prior=None,
@@ -412,8 +412,8 @@ def prior_model_generation(data,
 
     if parameter_set is None:
         parameter_set = {"hidden_nodes": 32, "hidden_layers": 2, "batch_norm": True,
-         "learning_rate": 0.01, "batch_size": 32, "dropout": 0.1,
-         "optimizer": tt.optim.Adam()}
+                         "learning_rate": 0.01, "batch_size": 32, "dropout": 0.1,
+                         "optimizer": tt.optim.Adam()}
 
     data_prior_val = data.sample(frac=0.2)
     data_prior_train = data.drop(data_prior_val.index)
