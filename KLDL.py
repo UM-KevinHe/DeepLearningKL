@@ -133,10 +133,10 @@ def hyperparameter_set_list(hidden_nodes=None,
                     for e in batch_size:
                         for f in dropout:
                             for g in optimizer:
-                        hyperparameter_set = {"hidden_nodes": a, "hidden_layers": b, "batch_norm": c,
-                                              "learning_rate": d, "batch_size": e, "dropout": f,
-                                              "optimizer": g}
-                        set_list.append(hyperparameter_set)
+                                hyperparameter_set = {"hidden_nodes": a, "hidden_layers": b, "batch_norm": c,
+                                                      "learning_rate": d, "batch_size": e, "dropout": f,
+                                                      "optimizer": g}
+                                set_list.append(hyperparameter_set)
     return set_list
 
 
