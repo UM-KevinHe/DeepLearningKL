@@ -111,19 +111,40 @@ def cont_to_disc(data, labtrans=None, scheme="quantiles", time_intervals=20):
         return data
 
 
-def hyperparameter_set_list(hidden_nodes=[32, 64, 128],
-                            hidden_layers=[2, 3, 4],
-                            batch_norm=[True, False],
-                            learning_rate=[0.0005, 0.001, 0.01, 0.1],
-                            batch_size=[32, 64, 128]):
+def hyperparameter_set_list(hidden_nodes=None,
+                            hidden_layers=None,
+                            batch_norm=None,
+                            learning_rate=None,
+                            batch_size=None,
+                            dropout=None,
+                            optimizer=None,
+                            ):
+    if optimizer is None:
+        optimizer = [tt.optim.Adam()]
+    if batch_size is None:
+        batch_size = [32, 64, 128]
+    if learning_rate is None:
+        learning_rate = [0.0005, 0.001, 0.01, 0.1]
+    if batch_norm is None:
+        batch_norm = [True, False]
+    if hidden_layers is None:
+        hidden_layers = [2, 3, 4]
+    if hidden_nodes is None:
+        hidden_nodes = [32, 64, 128]
+    if dropout is None:
+        dropout = [0, 0.1, 0.25]
+
     set_list = []
     for a in hidden_nodes:
         for b in hidden_layers:
             for c in batch_norm:
                 for d in learning_rate:
                     for e in batch_size:
+                        for f in dropout:
+                            for g in optimizer:
                         hyperparameter_set = {"hidden_nodes": a, "hidden_layers": b, "batch_norm": c,
-                                              "learning_rate": d, "batch_size": e}
+                                              "learning_rate": d, "batch_size": e, "dropout": f,
+                                              "optimizer": g}
                         set_list.append(hyperparameter_set)
     return set_list
 
@@ -301,8 +322,6 @@ def cross_validation_eta(df_local, eta_list, model_prior,
 def model_generation(x_train, x_val, y_train, y_val, with_prior=True, eta=None, model_prior=None,
                      parameter_set=None,
                      time_intervals=20,
-                     dropout=0.1,
-                     optimizer=tt.optim.Adam(),
                      epochs=512,
                      patience=5,
                      verbose=False,
@@ -334,12 +353,16 @@ def model_generation(x_train, x_val, y_train, y_val, with_prior=True, eta=None, 
         batch_norm = True
         learning_rate = 0.01
         batch_size = 32
+        dropout = 0.1
+        optimizer = tt.optim.Adam()
     else:
         hidden_nodes = parameter_set["hidden_nodes"]
         hidden_layers = parameter_set['hidden_layers']
         batch_norm = parameter_set['batch_norm']
         learning_rate = parameter_set['learning_rate']
         batch_size = parameter_set['batch_size']
+        dropout = parameter_set['dropout']
+        optimizer = parameter_set['optimizer']
 
     if (with_prior == True):
         if ((eta is None) or (model_prior is None)):
@@ -383,8 +406,6 @@ def model_generation(x_train, x_val, y_train, y_val, with_prior=True, eta=None, 
 def prior_model_generation(data,
                            parameter_set=None,
                            time_intervals=20,
-                           dropout=0.1,
-                           optimizer=tt.optim.Adam(),
                            epochs=512,
                            patience=5,
                            verbose=False,
@@ -409,17 +430,9 @@ def prior_model_generation(data,
   '''
 
     if (parameter_set == None):
-        hidden_nodes = 32
-        hidden_layers = 2
-        batch_norm = True
-        learning_rate = 0.01
-        batch_size = 32
-    else:
-        hidden_nodes = parameter_set["hidden_nodes"]
-        hidden_layers = parameter_set['hidden_layers']
-        batch_norm = parameter_set['batch_norm']
-        learning_rate = parameter_set['learning_rate']
-        batch_size = parameter_set['batch_size']
+        parameter_set = {"hidden_nodes": 32, "hidden_layers": 2, "batch_norm": True,
+         "learning_rate": 0.01, "batch_size": 32, "dropout": 0.1,
+         "optimizer": tt.optim.Adam()}
 
     data_prior_val = data.sample(frac=0.2)
     data_prior_train = data.drop(data_prior_val.index)
