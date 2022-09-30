@@ -2,13 +2,7 @@ from sklearn.model_selection import KFold
 import torch.nn as nn
 import torch.nn.functional as F
 
-import os
-import sys
-import time
-
 import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
 import torch  # For building the networks
 import torchtuples as tt  # Some useful functions
 import Structure
@@ -56,11 +50,8 @@ class NewlyDefinedLoss(nn.Module):
 
         combined_info = (torch.tensor(zeros_train, device=phi.device) + self.eta * prior_info_train) / (1 + self.eta)
 
-        if events.dtype is torch.bool:
-            events = events.float()
-        events = events.view(-1, 1)
         idx_durations = idx_durations.view(-1, 1)
-        if (option is None):
+        if option is None:
             bce = F.binary_cross_entropy_with_logits(phi, combined_info, reduction='none')
         else:
             bce = nn.BCELoss(phi, combined_info, reduction='none')
@@ -100,7 +91,7 @@ class NewlyDefinedLoss2(nn.Module):
 
 def cont_to_disc(data, labtrans=None, scheme="quantiles", time_intervals=20):
     get_target = lambda df: (df['duration'].values, np.array(df['event'].values, dtype=np.float32))
-    if (labtrans == None):
+    if labtrans is None:
         labtrans = LogisticHazard.label_transform(time_intervals, scheme)
         y_train = labtrans.fit_transform(*get_target(data))
         data["duration"] = y_train[0]
@@ -160,20 +151,20 @@ def mapper_generation(cols_standardize=None, cols_leave=None):
     standardize = False
     leave = False
 
-    if (cols_standardize is None and cols_leave is None):
+    if cols_standardize is None and cols_leave is None:
         raise ValueError("Please at least assign one kinds of data to be processed. Either standardize or leave")
-    if (cols_standardize is not None):
+    if cols_standardize is not None:
         standardize_features = [([col], StandardScaler()) for col in cols_standardize]
         standardize = True
-    if (cols_leave is not None):
+    if cols_leave is not None:
         leave_features = [(col, None) for col in cols_leave]
         leave = True
 
-    if (standardize == True and leave == True):
+    if standardize == True and leave == True:
         x_mapper_float = DataFrameMapper(standardize_features + leave_features)
-    if (standardize == True and leave == False):
+    if standardize == True and leave == False:
         x_mapper_float = DataFrameMapper(standardize_features)
-    if (standardize == False and leave == True):
+    if standardize == False and leave == True:
         x_mapper_float = DataFrameMapper(leave_features)
 
     return x_mapper_float
@@ -182,8 +173,6 @@ def mapper_generation(cols_standardize=None, cols_leave=None):
 def cross_validation_eta(df_local, eta_list, model_prior,
                          parameter_set=None,
                          time_intervals=20,
-                         dropout=0.1,
-                         optimizer=tt.optim.Adam(),
                          epochs=512,
                          patience=5,
                          n_splits=5,
@@ -193,7 +182,7 @@ def cross_validation_eta(df_local, eta_list, model_prior,
                          cols_leave=None,
                          cols_standardize_prior=None,
                          cols_leave_prior=None):
-    '''
+    """
   Do Cross Validation and select the best eta with only local data
 
   df_local: The local data
@@ -210,41 +199,33 @@ def cross_validation_eta(df_local, eta_list, model_prior,
   epochs: epochs
   patience: The waiting steps used in earlystopping
   verbose: Whether you want to print out the logs for training
-'''
+"""
 
-    if (parameter_set == None):
-        hidden_nodes = 32
-        hidden_layers = 2
-        batch_norm = True
-        learning_rate = 0.01
-        batch_size = 32
-    else:
-        hidden_nodes = parameter_set["hidden_nodes"]
-        hidden_layers = parameter_set['hidden_layers']
-        batch_norm = parameter_set['batch_norm']
-        learning_rate = parameter_set['learning_rate']
-        batch_size = parameter_set['batch_size']
+    if parameter_set is None:
+        parameter_set = {"hidden_nodes": 32, "hidden_layers": 2, "batch_norm": True,
+                         "learning_rate": 0.01, "batch_size": 32, "dropout": 0.1,
+                         "optimizer": tt.optim.Adam()}
 
-    if metric not in ['C-index', 'IBS', 'IBLL']:
+    if metric not in ['C-index', 'IBS', 'INBLL']:
         raise ValueError("Please provide with a metric used to do hyperparameter tuning, which should be one of ["
-                         "'C-index', 'IBS', 'IBLL']")
+                         "'C-index', 'IBS', 'INBLL']")
 
     df_test = df_local.sample(frac=0.2)
     df_train = df_local.drop(df_test.index)
 
-    if cols_standardize == None:
+    if cols_standardize is None:
         cols_standardize = ['x1', 'x2', 'x3']
     mapper = mapper_generation(cols_standardize=cols_standardize, cols_leave=cols_leave)
-    x_train = mapper.fit_transform(df_train).astype('float32')
+    _ = mapper.fit_transform(df_train).astype('float32')
     x_test = mapper.transform(df_test).astype('float32')
 
     # Difference: The mapper will differ in the columns, but applying on the same data
     # to adapt to the difference in the columns for prior and local model
 
-    if cols_standardize_prior == None:
+    if cols_standardize_prior is None:
         cols_standardize_prior = cols_standardize.copy()
     mapper_prior = mapper_generation(cols_standardize=cols_standardize_prior, cols_leave=cols_leave_prior)
-    x_train_prior = mapper_prior.fit_transform(df_train).astype('float32')
+    _ = mapper_prior.fit_transform(df_train).astype('float32')
     x_test_prior = mapper_prior.transform(df_test).astype('float32')
 
     get_target = lambda df: (df['duration'].values, np.array(df['event'].values, dtype=np.float32))
@@ -263,7 +244,7 @@ def cross_validation_eta(df_local, eta_list, model_prior,
         concordance_td_list_CV = []
         integrated_brier_score_list_CV = []
         integrated_nbll_list_CV = []
-        likelihood_list_CV = []
+        # likelihood_list_CV = []
 
         for train_index, test_index in kf.split(df_train):
             data_local_train_index = train_index
@@ -281,7 +262,8 @@ def cross_validation_eta(df_local, eta_list, model_prior,
             y_val = (x_val_prior, data_local_val['duration'].values, data_local_val['event'].values)
 
             model, _ = model_generation(x_train, x_val, y_train, y_val, eta=eta, model_prior=model_prior,
-                                        parameter_set=parameter_set, time_intervals=time_intervals)
+                                        parameter_set=parameter_set, time_intervals=time_intervals,
+                                        epochs=epochs, patience=patience, verbose=verbose)
 
             concordance_td, integrated_brier_score, integrated_nbll = evaluation_metrics(x_test, durations_test,
                                                                                          events_test,
@@ -306,7 +288,7 @@ def cross_validation_eta(df_local, eta_list, model_prior,
             if best_ibs > integrated_brier_score:
                 best_ibs = integrated_brier_score
                 best_eta = eta
-        elif metric == "IBLL":
+        elif metric == "INBLL":
             print(integrated_nbll_list_CV)
             integrated_nbll = sum(integrated_nbll_list_CV) / len(integrated_nbll_list_CV)
             print(integrated_nbll)
@@ -327,7 +309,7 @@ def model_generation(x_train, x_val, y_train, y_val, with_prior=True, eta=None, 
                      verbose=False,
                      option=None,
                      Model=None):
-    '''
+    """
   Generate a model with or without the aid of prior information
 
   x_train, x_val, y_train, y_val: x and y data that used for training the model
@@ -345,9 +327,9 @@ def model_generation(x_train, x_val, y_train, y_val, with_prior=True, eta=None, 
   epochs: epochs
   patience: The waiting steps used in earlystopping
   verbose: Whether you want to print out the logs for training
-  '''
+  """
 
-    if (parameter_set == None):
+    if parameter_set is None:
         hidden_nodes = 32
         hidden_layers = 2
         batch_norm = True
@@ -364,22 +346,21 @@ def model_generation(x_train, x_val, y_train, y_val, with_prior=True, eta=None, 
         dropout = parameter_set['dropout']
         optimizer = parameter_set['optimizer']
 
-    if (with_prior == True):
-        if ((eta is None) or (model_prior is None)):
+    if with_prior:
+        if (eta is None) or (model_prior is None):
             raise ValueError("Please provide with eta and model_prior")
 
-    train = tt.tuplefy(x_train, y_train)
     val = tt.tuplefy(x_val, y_val)
 
     in_features = x_train.shape[1]
-    num_nodes = [hidden_nodes for i in range(hidden_layers)]
+    num_nodes = [hidden_nodes for _ in range(hidden_layers)]
     out_features = time_intervals
     if option is None:
         net = tt.practical.MLPVanilla(in_features, num_nodes, out_features, batch_norm, dropout)
     else:
         net = Structure.MLPProportional(in_features, num_nodes, out_features, batch_norm, dropout, option=option)
     if Model is None:
-        if (with_prior == True):
+        if with_prior:
             loss = NewlyDefinedLoss(eta, model_prior, time_intervals, option)
             model = LogisticHazard(net, optimizer, loss=loss)
         else:
@@ -411,7 +392,7 @@ def prior_model_generation(data,
                            verbose=False,
                            cols_standardize=None,
                            cols_leave=None):
-    '''
+    """
   Generate a model used for prior information.
 
   data: prior_data
@@ -427,16 +408,16 @@ def prior_model_generation(data,
   patience: The waiting steps used in earlystopping
   verbose: Whether you want to print out the logs for training
 
-  '''
+  """
 
-    if (parameter_set == None):
+    if parameter_set is None:
         parameter_set = {"hidden_nodes": 32, "hidden_layers": 2, "batch_norm": True,
          "learning_rate": 0.01, "batch_size": 32, "dropout": 0.1,
          "optimizer": tt.optim.Adam()}
 
     data_prior_val = data.sample(frac=0.2)
     data_prior_train = data.drop(data_prior_val.index)
-    if cols_standardize == None:
+    if cols_standardize is None:
         cols_standardize = ['x1', 'x2', 'x3']
     mapper = mapper_generation(cols_standardize=cols_standardize, cols_leave=cols_leave)
     x_train = mapper.fit_transform(data_prior_train).astype('float32')
@@ -447,7 +428,7 @@ def prior_model_generation(data,
     y_val = get_target(data_prior_val)
 
     model_prior, _ = model_generation(x_train, x_val, y_train, y_val, with_prior=False, parameter_set=parameter_set,
-                                      verbose=verbose, time_intervals=time_intervals)
+                                      verbose=verbose, time_intervals=time_intervals, epochs=epochs, patience=patience)
 
     return model_prior
 
