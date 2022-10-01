@@ -13,7 +13,6 @@ from sklearn.preprocessing import StandardScaler
 from sklearn_pandas import DataFrameMapper
 from sklearn.preprocessing import OneHotEncoder
 
-from pycox.datasets import metabric
 from pycox.models import LogisticHazard
 from pycox.models import PMF
 from pycox.models import MTLR
@@ -623,7 +622,7 @@ def evaluation_metrics(x_test, durations_test, events_test, model, competing=Fal
             hazard = model.predict(x_test)
             surv = np.log((1 - hazard) + (10 ** (-6)))
             surv = np.exp(np.cumsum(surv, 1))
-            surv = tt.utils.array_or_tensor(surv, None, x_test)
+            # surv = tt.utils.array_or_tensor(surv, None, x_test)
             surv = pd.DataFrame(surv.transpose(), model.duration_index)
         else:
             surv = model.predict_surv_df(x_test)
