@@ -621,7 +621,8 @@ def evaluation_metrics(x_test, durations_test, events_test, model, competing=Fal
     else:
         if option is True:
             hazard = model.predict(x_test)
-            surv = (1 - hazard).add(10 ** (-6)).log().cumsum(1).exp()
+            surv = np.log((1 - hazard) + (10 ** (-6)))
+            surv = np.exp(np.cumsum(surv, 1))
             surv = tt.utils.array_or_tensor(surv, None, x_test)
         else:
             surv = model.predict_surv_df(x_test)
