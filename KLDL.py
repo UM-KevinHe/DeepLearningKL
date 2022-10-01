@@ -17,7 +17,9 @@ from pycox.models import LogisticHazard
 from pycox.models import PMF
 from pycox.models import MTLR
 from pycox.models import DeepHitSingle
+from pycox.models import DeepHit
 from pycox.evaluation import EvalSurv
+from pycox.preprocessing.label_transforms import LabTransDiscreteTime
 
 concordance_td_list_1 = []
 integrated_brier_score_list_1 = []
@@ -90,10 +92,20 @@ class NewlyDefinedLoss2(nn.Module):
         return self.nll_logistic_hazard(phi, idx_durations, events)
 
 
-def cont_to_disc(data, labtrans=None, scheme="quantiles", time_intervals=20):
+class LabTransform(LabTransDiscreteTime):
+    def transform(self, durations, events):
+        durations, is_event = super().transform(durations, events > 0)
+        events[is_event == 0] = 0
+        return durations, events.astype('int64')
+
+
+def cont_to_disc(data, labtrans=None, scheme="quantiles", time_intervals=20, competing=False):
     get_target = lambda df: (df['duration'].values, np.array(df['event'].values, dtype=np.float32))
     if labtrans is None:
-        labtrans = LogisticHazard.label_transform(time_intervals, scheme)
+        if competing is True:
+            labtrans = LabTransform(time_intervals)
+        else:
+            labtrans = LogisticHazard.label_transform(time_intervals, scheme)
         y_train = labtrans.fit_transform(*get_target(data))
         data["duration"] = y_train[0]
         return labtrans, data
@@ -101,6 +113,7 @@ def cont_to_disc(data, labtrans=None, scheme="quantiles", time_intervals=20):
         y_train = labtrans.transform(*get_target(data))
         data["duration"] = y_train[0]
         return data
+
 
 
 def hyperparameter_set_list(hidden_nodes=None,
@@ -192,7 +205,8 @@ def cross_validation_eta(df_local, eta_list, model_prior,
                          cols_categorical=None,
                          cols_standardize_prior=None,
                          cols_leave_prior=None,
-                         cols_categorical_prior=None):
+                         cols_categorical_prior=None,
+                         net=None):
     """
   Do Cross Validation and select the best eta with only local data
 
@@ -276,7 +290,7 @@ def cross_validation_eta(df_local, eta_list, model_prior,
 
             model, _ = model_generation(x_train, x_val, y_train, y_val, eta=eta, model_prior=model_prior,
                                         parameter_set=parameter_set, time_intervals=time_intervals,
-                                        epochs=epochs, patience=patience, verbose=verbose)
+                                        epochs=epochs, patience=patience, verbose=verbose, net=net)
 
             concordance_td, integrated_brier_score, integrated_nbll = evaluation_metrics(x_test, durations_test,
                                                                                          events_test,
@@ -320,7 +334,8 @@ def model_generation(x_train, x_val, y_train, y_val, with_prior=True, eta=None, 
                      patience=5,
                      verbose=False,
                      option=None,
-                     Model=None):
+                     Model=None,
+                     net=None):
     """
   Generate a model with or without the aid of prior information
 
@@ -366,13 +381,14 @@ def model_generation(x_train, x_val, y_train, y_val, with_prior=True, eta=None, 
 
     val = tt.tuplefy(x_val, y_val)
 
-    in_features = x_train.shape[1]
-    num_nodes = [hidden_nodes for _ in range(hidden_layers)]
-    out_features = time_intervals
-    if option is None:
-        net = tt.practical.MLPVanilla(in_features, num_nodes, out_features, batch_norm, dropout)
-    else:
-        net = Structure.MLPProportional(in_features, num_nodes, out_features, batch_norm, dropout, option=option)
+    if net is None:
+        in_features = x_train.shape[1]
+        num_nodes = [hidden_nodes for _ in range(hidden_layers)]
+        out_features = time_intervals
+        if option is None:
+            net = tt.practical.MLPVanilla(in_features, num_nodes, out_features, batch_norm, dropout)
+        else:
+            net = Structure.MLPProportional(in_features, num_nodes, out_features, batch_norm, dropout, option=option)
     if Model is None:
         if with_prior:
             loss = NewlyDefinedLoss(eta, model_prior, time_intervals, option)
@@ -382,7 +398,9 @@ def model_generation(x_train, x_val, y_train, y_val, with_prior=True, eta=None, 
             model = LogisticHazard(net, optimizer, loss=loss)
     else:
         if Model == "DeepHit":
-            model = DeepHitSingle(net, optimizer, alpha=alpha, sigma=0.1)
+            model = DeepHitSingle(net, optimizer, alpha=alpha, sigma=sigma)
+        if Model == "DeepHitCompeting":
+            model = DeepHit(net, optimizer, alpha=alpha, sigma=sigma)
         if Model == "PMF":
             model = PMF(net, optimizer)
         if Model == "MTLR":
@@ -406,7 +424,8 @@ def prior_model_generation(data,
                            verbose=False,
                            cols_standardize=None,
                            cols_leave=None,
-                           cols_categorical=None):
+                           cols_categorical=None,
+                           net=None):
     """
   Generate a model used for prior information.
 
@@ -443,7 +462,7 @@ def prior_model_generation(data,
     y_val = get_target(data_prior_val)
 
     model_prior, _ = model_generation(x_train, x_val, y_train, y_val, with_prior=False, parameter_set=parameter_set,
-                                      verbose=verbose, time_intervals=time_intervals, epochs=epochs, patience=patience)
+                                      verbose=verbose, time_intervals=time_intervals, epochs=epochs, patience=patience, net=net)
 
     return model_prior
 

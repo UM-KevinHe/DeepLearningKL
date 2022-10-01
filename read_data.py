@@ -91,6 +91,14 @@ def sim_event_times(mnist, max_time=365):
     return event_times, ~censored
 
 
+def simulation_data_competing():
+    url = 'https://raw.githubusercontent.com/chl8856/DeepHit/master/sample%20data/SYNTHETIC/synthetic_comprisk.csv'
+    df_train = pd.read_csv(url)
+    df_train['duration'] = df_train['time'].copy()
+    df_train['event'] = df_train['label'].copy()
+    df_train = df_train.drop(columns=['time', 'label'])
+    return df_train
+
 # def image_data():
 #     transform = transforms.Compose(
 #         [transforms.ToTensor(),
