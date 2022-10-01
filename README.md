@@ -101,7 +101,7 @@ We have provided two kinds of tutorials. One kind of them is designed as a **dic
         <td>
         Our model, which requires prior information (model). C means competing risk.
         </td>
-        <td>Section 3.3 in <a href="#references">[6]</a>
+        <td><a href="https://nbviewer.org/github/UM-KevinHe/DeepLearningKL/blob/main/Tutorial_%20KLDL-C.ipynb">notebook</a>
         </td>
     </tr>
     <tr>
@@ -109,7 +109,7 @@ We have provided two kinds of tutorials. One kind of them is designed as a **dic
         <td>
         Our model, with manually defined 3 link functions as an option of parameter, used when the data shows some statistical properties.
         </td>
-        <td>Section 3.2.3 in <a href="#references">[6]</a>
+        <td><a href="https://nbviewer.org/github/UM-KevinHe/DeepLearningKL/blob/main/Tutorial_%20KLDL-L.ipynb">notebook</a>
         </td>
     </tr>
     <tr>
@@ -118,7 +118,7 @@ We have provided two kinds of tutorials. One kind of them is designed as a **dic
         The Logistic-Hazard method parametrize the discrete hazards and optimize the survival likelihood <a href="#references">[12]</a> <a href="#references">[7]</a>.
         It is also called Partial Logistic Regression and Nnet-survival.
         </td>
-        <td><a href="https://nbviewer.jupyter.org/github/havakv/pycox/blob/master/examples/01_introduction.ipynb">notebook</a>
+        <td><a href="https://nbviewer.org/github/UM-KevinHe/DeepLearningKL/blob/main/Tutorial_%20KLDL-S.ipynb">notebook</a>
         </td>
     </tr>
     <tr>
@@ -126,7 +126,7 @@ We have provided two kinds of tutorials. One kind of them is designed as a **dic
         <td>
         The PMF method parametrize the probability mass function (PMF) and optimize the survival likelihood <a href="#references">[12]</a>. It is the foundation of methods such as DeepHit and MTLR.
         </td>
-        <td><a href="https://nbviewer.jupyter.org/github/havakv/pycox/blob/master/examples/pmf.ipynb">notebook</a>
+        <td><a href="https://nbviewer.org/github/UM-KevinHe/DeepLearningKL/blob/main/Tutorial_%20Deephit%2C%20PMF%20and%20MTLR.ipynb">notebook</a>
         </td>
     </tr>
     <tr>
@@ -135,16 +135,16 @@ We have provided two kinds of tutorials. One kind of them is designed as a **dic
         DeepHit is a PMF method with a loss for improved ranking that 
         can handle competing risks <a href="#references">[3]</a>. This is the version for single-risk setting.
         </td>
-        <td><a href="https://nbviewer.jupyter.org/github/havakv/pycox/blob/master/examples/deephit.ipynb">single</a>
-        <a href="https://nbviewer.jupyter.org/github/havakv/pycox/blob/master/examples/deephit_competing_risks.ipynb">competing</a></td>
+        <td><a href="https://nbviewer.org/github/UM-KevinHe/DeepLearningKL/blob/main/Tutorial_%20Deephit%2C%20PMF%20and%20MTLR.ipynb">notebook</a>
+        </td>
     </tr>
     <tr>
         <td>DeepHit</td>
         <td>
         Same as above, but this is the version for the competing risk setting.
         </td>
-        <td><a href="https://nbviewer.jupyter.org/github/havakv/pycox/blob/master/examples/deephit.ipynb">single</a>
-        <a href="https://nbviewer.jupyter.org/github/havakv/pycox/blob/master/examples/deephit_competing_risks.ipynb">competing</a></td>
+        <td>
+        <a href="https://nbviewer.org/github/UM-KevinHe/DeepLearningKL/blob/main/Tutorial_%20KLDL-C.ipynb">notebook</a></td>
     </tr>
 </table>
 
