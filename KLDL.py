@@ -584,8 +584,8 @@ def evaluation_metrics(x_test, durations_test, events_test, model, competing=Fal
         ev1 = EvalSurv(cif1, durations_test, events_test == 1, censor_surv='km')
         ev2 = EvalSurv(cif2, durations_test, events_test == 2, censor_surv='km')
 
-        concordance_td_1 = ev1.concordance_td('antolini')
-        concordance_td_2 = ev2.concordance_td('antolini')
+        concordance_td_1 = ev1.concordance_td()
+        concordance_td_2 = ev2.concordance_td()
 
         concordance_td = (concordance_td_1 + concordance_td_2) / 2
         integrated_brier_score = 1
