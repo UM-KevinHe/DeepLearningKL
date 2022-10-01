@@ -3,6 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 import numpy as np
+import pandas as pd
 import torch  # For building the networks
 import torchtuples as tt  # Some useful functions
 import Structure
@@ -566,14 +567,38 @@ def prior_model_generation(data,
     return model_prior
 
 
-def evaluation_metrics(x_test, durations_test, events_test, model):
-    surv = model.predict_surv_df(x_test)
-    time_grid = np.linspace(durations_test.min(), durations_test.max(), 100)
+def evaluation_metrics(x_test, durations_test, events_test, model, competing=False):
+    if competing is True:
+        pmf_pre = model.predict(x_test)
+        N = pmf_pre.shape[0]
+        K = pmf_pre.shape[2]
+        pmf_pre = torch.tensor(pmf_pre)
+        pmf_pre = torch.cat((pmf_pre, 1 - torch.sum(pmf_pre, axis=1).reshape(N, 1, K)), 1)
+        pmf = F.softmax(pmf_pre, dim=1)
 
-    ev = EvalSurv(surv, durations_test, events_test, censor_surv='km')
+        cif = (1 - pmf).cumprod(2)
 
-    concordance_td = ev.concordance_td('antolini')
-    integrated_brier_score = ev.integrated_brier_score(time_grid)
-    integrated_nbll = ev.integrated_nbll(time_grid)
+        cif1 = pd.DataFrame(np.array(cif[:, 0, :].t()), model.duration_index)
+        cif2 = pd.DataFrame(np.array(cif[:, 1, :].t()), model.duration_index)
+
+        ev1 = EvalSurv(cif1, durations_test, events_test == 1, censor_surv='km')
+        ev2 = EvalSurv(cif2, durations_test, events_test == 2, censor_surv='km')
+
+        concordance_td_1 = ev1.concordance_td('antolini')
+        concordance_td_2 = ev2.concordance_td('antolini')
+
+        concordance_td = (concordance_td_1 + concordance_td_2) / 2
+        integrated_brier_score = 1
+        integrated_nbll = 1
+
+    else:
+        surv = model.predict_surv_df(x_test)
+        time_grid = np.linspace(durations_test.min(), durations_test.max(), 100)
+
+        ev = EvalSurv(surv, durations_test, events_test, censor_surv='km')
+
+        concordance_td = ev.concordance_td('antolini')
+        integrated_brier_score = ev.integrated_brier_score(time_grid)
+        integrated_nbll = ev.integrated_nbll(time_grid)
 
     return concordance_td, integrated_brier_score, integrated_nbll
