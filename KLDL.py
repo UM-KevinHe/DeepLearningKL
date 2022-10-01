@@ -378,7 +378,7 @@ def cross_validation_eta(df_local, eta_list, model_prior,
 
             concordance_td, integrated_brier_score, integrated_nbll = evaluation_metrics(x_test, durations_test,
                                                                                          events_test,
-                                                                                         model)
+                                                                                         model, competing=competing)
 
             concordance_td_list_CV.append(concordance_td)
             integrated_brier_score_list_CV.append(integrated_brier_score)
