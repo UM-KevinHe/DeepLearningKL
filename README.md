@@ -86,7 +86,7 @@ We have provided two kinds of tutorials. One kind of them is designed as a **dic
     <tr>
         <th>Method</th>
         <th>Description</th>
-        <th>Source</th>
+        <th>Example</th>
     </tr>
     <tr>
         <td><b>KLDL-S</b></td>
