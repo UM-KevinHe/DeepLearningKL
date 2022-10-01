@@ -519,7 +519,8 @@ def prior_model_generation(data,
                            cols_standardize=None,
                            cols_leave=None,
                            cols_categorical=None,
-                           net=None):
+                           net=None,
+                           competing=False):
     """
   Generate a model used for prior information.
 
@@ -551,7 +552,10 @@ def prior_model_generation(data,
     x_train = mapper.fit_transform(data_prior_train).astype('float32')
     x_val = mapper.transform(data_prior_val).astype('float32')
 
-    get_target = lambda df: (df['duration'].values, np.array(df['event'].values, dtype=np.float32))
+    if competing is True:
+        get_target = lambda df: (df['duration'].values, df['event'].values)
+    else:
+        get_target = lambda df: (df['duration'].values, np.array(df['event'].values, dtype=np.float32))
     y_train = get_target(data_prior_train)
     y_val = get_target(data_prior_val)
 
