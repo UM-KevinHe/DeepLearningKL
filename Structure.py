@@ -32,20 +32,20 @@ class ProportionalBlock(torch.nn.Module):
 
     def forward(self, input):
         option = self.option
-        if (option == "log-log"):
+        if option == "log-log":
             input = input + torch.log(-torch.log(torch.sigmoid(self.a)))
             input = 1 - torch.exp(-torch.exp(input))
             return input
-        elif (option == "log-log-2"):
+        elif option == "log-log-2":
             input = torch.pow(torch.sigmoid(self.a), torch.exp(input))
             input = 1 - input
             return input
-        elif (option == "log"):
+        elif option == "log":
             input = input + torch.log(torch.sigmoid(self.a))
             Softplus = nn.Softplus()
             input = Softplus(input)
             return input
-        elif (option == "logit"):
+        elif option == "logit":
             return torch.sigmoid(input + self.a)
 
 

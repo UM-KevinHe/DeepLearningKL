@@ -578,7 +578,7 @@ def prior_model_generation(data,
     return model_prior
 
 
-def evaluation_metrics(x_test, durations_test, events_test, model, competing=False, Deephit=False):
+def evaluation_metrics(x_test, durations_test, events_test, model, competing=False, Deephit=False, option=False):
     if competing is True:
         if Deephit is False:
             pmf_pre = model.predict(x_test)
@@ -619,7 +619,12 @@ def evaluation_metrics(x_test, durations_test, events_test, model, competing=Fal
         integrated_nbll = (integrated_nbll_1 + integrated_nbll_2) / 2
 
     else:
-        surv = model.predict_surv_df(x_test)
+        if option is True:
+            hazard = model.predict(x_test)
+            surv = (1 - hazard).add(10 ** (-6)).log().cumsum(1).exp()
+            surv = tt.utils.array_or_tensor(surv, None, x_test)
+        else:
+            surv = model.predict_surv_df(x_test)
         time_grid = np.linspace(durations_test.min(), durations_test.max(), 100)
 
         ev = EvalSurv(surv, durations_test, events_test, censor_surv='km')
