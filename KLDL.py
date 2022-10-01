@@ -92,6 +92,88 @@ class NewlyDefinedLoss2(nn.Module):
         return self.nll_logistic_hazard(phi, idx_durations, events)
 
 
+class NewlyDefinedLoss3(nn.Module):
+    def __init__(self):
+        super().__init__()
+
+    def nll_pmf_cr_2(self, phi, idx_durations, events, reduction='mean'):
+
+        N = phi.shape[0]
+        Q = phi.shape[1]
+        K = phi.shape[2]
+
+        test = torch.zeros((N, Q, K))
+
+        for i in range(N):
+            time_temp = idx_durations[i]
+            status_temp = events[i] - 1
+            if status_temp == -1:
+                continue
+            test[i][status_temp][time_temp] = 1
+
+        test = torch.cat((test, 1 - torch.sum(test, axis=1).reshape(N, 1, K)), 1)
+        phi = torch.cat((phi, 1 - torch.sum(phi, axis=1).reshape(N, 1, K)), 1)
+        phi = F.softmax(phi, dim=1)
+
+        bce = torch.sum(-torch.log(phi) * test, 1)
+
+        idx_durations = idx_durations.view(-1, 1)
+        events = events.view(-1, 1)
+
+        loss = bce.cumsum(1).gather(1, idx_durations).view(-1)
+        return loss.mean()
+
+    def forward(self, phi, idx_durations, events, reduction='mean'):
+        return self.nll_pmf_cr_2(phi, idx_durations, events, reduction='mean')
+
+
+class NewlyDefinedLoss4(nn.Module):
+    def __init__(self, eta, model):
+        super().__init__()
+
+        self.eta = eta
+        self.model = model
+
+    def nll_pmf_cr_2(self, phi, x_train, idx_durations, events, reduction='mean'):
+
+        N = phi.shape[0]
+        Q = phi.shape[1]
+        K = phi.shape[2]
+
+        test = torch.zeros((N, Q, K))
+
+        for i in range(N):
+            time_temp = idx_durations[i]
+            status_temp = events[i] - 1
+            if status_temp == -1:
+                continue
+            test[i][status_temp][time_temp] = 1
+
+        pmf_pre = torch.tensor(self.model.predict(x_train))
+        N = pmf_pre.shape[0]
+        K = pmf_pre.shape[2]
+        pmf_pre = torch.cat((pmf_pre, 1 - torch.sum(pmf_pre, axis=1).reshape(N, 1, K)), 1)
+        pmf = F.softmax(pmf_pre, dim=1)
+        pmf = pmf[:, :-1, :]
+
+        test = (self.eta * pmf + test) / (1 + self.eta)
+
+        test = torch.cat((test, 1 - torch.sum(test, axis=1).reshape(N, 1, K)), 1)
+        phi = torch.cat((phi, 1 - torch.sum(phi, axis=1).reshape(N, 1, K)), 1)
+        phi = F.softmax(phi, dim=1)
+
+        bce = torch.sum(-torch.log(phi) * test, 1)
+
+        idx_durations = idx_durations.view(-1, 1)
+        events = events.view(-1, 1)
+
+        loss = bce.cumsum(1).gather(1, idx_durations).view(-1)
+        return loss.mean()
+
+    def forward(self, phi, x_train, idx_durations, events, reduction='mean'):
+        return self.nll_pmf_cr_2(phi, x_train, idx_durations, events, reduction='mean')
+
+
 class LabTransform(LabTransDiscreteTime):
     def transform(self, durations, events):
         durations, is_event = super().transform(durations, events > 0)
@@ -238,8 +320,8 @@ def cross_validation_eta(df_local, eta_list, model_prior,
     df_test = df_local.sample(frac=0.2)
     df_train = df_local.drop(df_test.index)
 
-    if cols_standardize is None:
-        cols_standardize = ['x1', 'x2', 'x3']
+    # if cols_standardize is None:
+    #     cols_standardize = ['x1', 'x2', 'x3']
     mapper = mapper_generation(cols_standardize=cols_standardize, cols_leave=cols_leave,
                                cols_categorical=cols_categorical)
     _ = mapper.fit_transform(df_train).astype('float32')
@@ -451,8 +533,8 @@ def prior_model_generation(data,
 
     data_prior_val = data.sample(frac=0.2)
     data_prior_train = data.drop(data_prior_val.index)
-    if cols_standardize is None:
-        cols_standardize = ['x1', 'x2', 'x3']
+    # if cols_standardize is None:
+    #     cols_standardize = ['x1', 'x2', 'x3']
     mapper = mapper_generation(cols_standardize=cols_standardize, cols_leave=cols_leave, cols_categorical=cols_categorical)
     x_train = mapper.fit_transform(data_prior_train).astype('float32')
     x_val = mapper.transform(data_prior_val).astype('float32')
