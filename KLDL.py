@@ -288,7 +288,8 @@ def cross_validation_eta(df_local, eta_list, model_prior,
                          cols_standardize_prior=None,
                          cols_leave_prior=None,
                          cols_categorical_prior=None,
-                         net=None):
+                         net=None,
+                         competing=False):
     """
   Do Cross Validation and select the best eta with only local data
 
@@ -372,7 +373,7 @@ def cross_validation_eta(df_local, eta_list, model_prior,
 
             model, _ = model_generation(x_train, x_val, y_train, y_val, eta=eta, model_prior=model_prior,
                                         parameter_set=parameter_set, time_intervals=time_intervals,
-                                        epochs=epochs, patience=patience, verbose=verbose, net=net)
+                                        epochs=epochs, patience=patience, verbose=verbose, net=net, competing=competing)
 
             concordance_td, integrated_brier_score, integrated_nbll = evaluation_metrics(x_test, durations_test,
                                                                                          events_test,
@@ -555,7 +556,8 @@ def prior_model_generation(data,
     y_val = get_target(data_prior_val)
 
     model_prior, _ = model_generation(x_train, x_val, y_train, y_val, with_prior=False, parameter_set=parameter_set,
-                                      verbose=verbose, time_intervals=time_intervals, epochs=epochs, patience=patience, net=net)
+                                      verbose=verbose, time_intervals=time_intervals, epochs=epochs, patience=patience
+                                      , net=net, competing=competing)
 
     return model_prior
 
