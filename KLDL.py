@@ -609,8 +609,14 @@ def evaluation_metrics(x_test, durations_test, events_test, model, competing=Fal
         concordance_td_1 = ev1.concordance_td()
         concordance_td_2 = ev2.concordance_td()
         concordance_td = (concordance_td_1 + concordance_td_2) / 2
-        integrated_brier_score = 1
-        integrated_nbll = 1
+
+        time_grid = np.linspace(durations_test.min(), durations_test.max(), 100)
+        integrated_brier_score_1 = ev1.integrated_brier_score(time_grid)
+        integrated_brier_score_2 = ev2.integrated_brier_score(time_grid)
+        integrated_brier_score = (integrated_brier_score_1 + integrated_brier_score_2) / 2
+        integrated_nbll_1 = ev1.integrated_nbll(time_grid)
+        integrated_nbll_2 = ev2.integrated_nbll(time_grid)
+        integrated_nbll = (integrated_nbll_1 + integrated_nbll_2) / 2
 
     else:
         surv = model.predict_surv_df(x_test)
