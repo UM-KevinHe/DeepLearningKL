@@ -331,8 +331,8 @@ def cross_validation_eta(df_local, eta_list, model_prior,
     # Difference: The mapper will differ in the columns, but applying on the same data
     # to adapt to the difference in the columns for prior and local model
 
-    if cols_standardize_prior is None:
-        cols_standardize_prior = cols_standardize.copy()
+    # if cols_standardize_prior is None:
+    #     cols_standardize_prior = cols_standardize.copy()
     mapper_prior = mapper_generation(cols_standardize=cols_standardize_prior, cols_leave=cols_leave_prior,
                                      cols_categorical=cols_categorical_prior)
     _ = mapper_prior.fit_transform(df_train).astype('float32')
