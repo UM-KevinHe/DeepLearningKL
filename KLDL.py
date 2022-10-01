@@ -417,7 +417,8 @@ def model_generation(x_train, x_val, y_train, y_val, with_prior=True, eta=None, 
                      verbose=False,
                      option=None,
                      Model=None,
-                     net=None):
+                     net=None,
+                     competing=False):
     """
   Generate a model with or without the aid of prior information
 
@@ -447,6 +448,7 @@ def model_generation(x_train, x_val, y_train, y_val, with_prior=True, eta=None, 
         dropout = 0.1
         optimizer = tt.optim.Adam()
         alpha = 1
+        sigma = 0.1
     else:
         hidden_nodes = parameter_set["hidden_nodes"]
         hidden_layers = parameter_set['hidden_layers']
@@ -456,6 +458,7 @@ def model_generation(x_train, x_val, y_train, y_val, with_prior=True, eta=None, 
         dropout = parameter_set['dropout']
         optimizer = parameter_set['optimizer']
         alpha = parameter_set['alpha']
+        sigma = parameter_set['sigma']
 
     if with_prior:
         if (eta is None) or (model_prior is None):
@@ -472,12 +475,20 @@ def model_generation(x_train, x_val, y_train, y_val, with_prior=True, eta=None, 
         else:
             net = Structure.MLPProportional(in_features, num_nodes, out_features, batch_norm, dropout, option=option)
     if Model is None:
-        if with_prior:
-            loss = NewlyDefinedLoss(eta, model_prior, time_intervals, option)
-            model = LogisticHazard(net, optimizer, loss=loss)
+        if competing is True:
+            if with_prior:
+                loss = NewlyDefinedLoss4(eta, model_prior)
+                model = LogisticHazard(net, optimizer, loss=loss)
+            else:
+                loss = NewlyDefinedLoss3()
+                model = LogisticHazard(net, optimizer, loss=loss)
         else:
-            loss = NewlyDefinedLoss2(option)
-            model = LogisticHazard(net, optimizer, loss=loss)
+            if with_prior:
+                loss = NewlyDefinedLoss(eta, model_prior, time_intervals, option)
+                model = LogisticHazard(net, optimizer, loss=loss)
+            else:
+                loss = NewlyDefinedLoss2(option)
+                model = LogisticHazard(net, optimizer, loss=loss)
     else:
         if Model == "DeepHit":
             model = DeepHitSingle(net, optimizer, alpha=alpha, sigma=sigma)
@@ -529,7 +540,7 @@ def prior_model_generation(data,
     if parameter_set is None:
         parameter_set = {"hidden_nodes": 32, "hidden_layers": 2, "batch_norm": True,
                          "learning_rate": 0.01, "batch_size": 32, "dropout": 0.1,
-                         "optimizer": tt.optim.Adam()}
+                         "optimizer": tt.optim.Adam(), "alpha": 1, "sigma": 0.1}
 
     data_prior_val = data.sample(frac=0.2)
     data_prior_train = data.drop(data_prior_val.index)
