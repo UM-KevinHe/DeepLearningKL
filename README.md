@@ -1,7 +1,9 @@
 # DeepLearningKL
-This project is to train deep learning model in Survival Analysis. However, we allow user to incorporate prior information, which can be either statistical model or other neural networks. KL divergence is used for incorporating, which measures the difference between prior information and local information. The weights of prior and local information are selected by hyperparameter tuning and higher weights of prior model mean the model tends to believe more prior information than the local information, which means the quality local data may not be so satisfactory. Besides that, we also do an extension from single-risk to competing risk case, which means our software can also handle competing risk data.
+This project is to train a deep learning model in Survival Analysis. However, we allow user to incorporate prior information, which can be either statistical models or other neural networks. KL divergence is used for incorporating, which measures the difference between prior information and local information. The weights of prior and local information are selected by hyperparameter tuning and higher weights of prior model mean the model tends to believe more prior information than the local information, which means the quality local data may not be so satisfactory. Besides, we also do an extension from single-risk to competing risk case, which means our software can also handle competing risk data.
 
-We have designed our own software and provided with a <a href="https://github.com/UM-KevinHe/DeepLearningKL/blob/main/Software_Tutorial.ipynb">tutorial</a>. For more information, see below.
+## Tutorials
+
+We have provided two kinds of tutorials. One kind of them is designed as a **dictionary**, containing a detailed and comprehensive introduction of all common usages related to the software (). For the other one, it contains a series of small tutorials, aiming at teaching users how to apply specific models in our software, you can see **Models** below for more information.
 
 ## Data
 <table>
@@ -34,6 +36,14 @@ We have designed our own software and provided with a <a href="https://github.co
         Prior and Local Data for Simulation 1 (Scheme 3), non linear and non proportional
         </td>
         <td><code>read_data.simulation_data(option="non linear non ph", n=10000)</code></td>
+    </tr>
+    <tr>
+        <td><b>MNIST</b></td>
+        <td>60000(training set)+10000(test set)</td>
+        <td>
+        A commonly-seen benchmark for image-processing tasks. We use it here as the simulation data to illustrate the usage of CNN for our model.
+        </td>
+        <td><code>read_data.image_data()</code></td>
     </tr>
     <tr>
         <td>metabric</td>
@@ -79,9 +89,17 @@ We have designed our own software and provided with a <a href="https://github.co
         <th>Source</th>
     </tr>
     <tr>
-        <td><b>KLDL-S/KLDL-C</b></td>
+        <td><b>KLDL-S</b></td>
         <td>
-        Our model, which requires prior information (model). S means single risk, C means competing risk.
+        Our model, which requires prior information (model). S means single risk
+        </td>
+        <td>Section 3.3 in <a href="#references">[6]</a>
+        </td>
+    </tr>
+    <tr>
+        <td><b>KLDL-C</b></td>
+        <td>
+        Our model, which requires prior information (model). C means competing risk.
         </td>
         <td>Section 3.3 in <a href="#references">[6]</a>
         </td>
@@ -112,10 +130,18 @@ We have designed our own software and provided with a <a href="https://github.co
         </td>
     </tr>
     <tr>
-        <td>DeepHit, DeepHitSingle</td>
+        <td>DeepHitSingle</td>
         <td>
         DeepHit is a PMF method with a loss for improved ranking that 
-        can handle competing risks <a href="#references">[3]</a>.
+        can handle competing risks <a href="#references">[3]</a>. This is the version for single-risk setting.
+        </td>
+        <td><a href="https://nbviewer.jupyter.org/github/havakv/pycox/blob/master/examples/deephit.ipynb">single</a>
+        <a href="https://nbviewer.jupyter.org/github/havakv/pycox/blob/master/examples/deephit_competing_risks.ipynb">competing</a></td>
+    </tr>
+    <tr>
+        <td>DeepHit</td>
+        <td>
+        Same as above, but this is the version for the competing risk setting.
         </td>
         <td><a href="https://nbviewer.jupyter.org/github/havakv/pycox/blob/master/examples/deephit.ipynb">single</a>
         <a href="https://nbviewer.jupyter.org/github/havakv/pycox/blob/master/examples/deephit_competing_risks.ipynb">competing</a></td>
@@ -171,7 +197,7 @@ The experiments are done 50 times with different samples of prior and local data
 ![Real_Data_MIMIC_1_Imperfect](https://user-images.githubusercontent.com/48302151/191658962-dc53d9d2-dedb-4706-92a6-60e4e1c53498.png)
 
 ## References
-[1. Di Wang, Wen Ye, Kevin He Proceedings of AAAI Spring Symposium on Survival Prediction - Algorithms, Challenges, and Applications 2021, PMLR 146:232-239, 2021.][3]
+[1. Wang, D., Ye, W., Sung, R., Jiang, H., Taylor, J. M. G., Ly, L., and He, K. (2021). Kullback-leibler-based discrete failure time models for integration of published prediction models with new time-to-event dataset.][3]
 
 [2. Kvamme H, Borgan Ø. Continuous and discrete-time survival prediction with neural networks. arXiv preprint arXiv:1910.06724. 2019 Oct 15.][5]
 
