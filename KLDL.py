@@ -624,6 +624,7 @@ def evaluation_metrics(x_test, durations_test, events_test, model, competing=Fal
             surv = np.log((1 - hazard) + (10 ** (-6)))
             surv = np.exp(np.cumsum(surv, 1))
             surv = tt.utils.array_or_tensor(surv, None, x_test)
+            surv = pd.DataFrame(surv.transpose(), model.duration_index)
         else:
             surv = model.predict_surv_df(x_test)
         time_grid = np.linspace(durations_test.min(), durations_test.max(), 100)
