@@ -3,7 +3,7 @@ This project is to train a deep learning model in Survival Analysis. However, we
 
 ## Tutorials
 
-We have provided two kinds of tutorials. One kind of them is designed as a **dictionary**, containing a detailed and comprehensive introduction of all common usages related to the software (). For the other one, it contains a series of small tutorials, aiming at teaching users how to apply specific models in our software, you can see **Models** below for more information.
+We have provided two kinds of tutorials. One kind of them is designed as a **dictionary**, containing a detailed and comprehensive introduction of all common usages related to the software (<a href="https://nbviewer.org/github/UM-KevinHe/DeepLearningKL/blob/main/Software_Tutorial.ipynb">tutorial</a>). For the other one, it contains a series of small tutorials, aiming at teaching users how to apply specific models in our software, you can see **Models** below for more information.
 
 ## Data
 <table>
