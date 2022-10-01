@@ -93,7 +93,7 @@ We have provided two kinds of tutorials. One kind of them is designed as a **dic
         <td>
         Our model, which requires prior information (model). S means single risk
         </td>
-        <td>Section 3.3 in <a href="#references">[6]</a>
+        <td><a href="https://nbviewer.org/github/UM-KevinHe/DeepLearningKL/blob/main/Tutorial_%20KLDL-S.ipynb">notebook</a>
         </td>
     </tr>
     <tr>
