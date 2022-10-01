@@ -182,6 +182,11 @@ class LabTransform(LabTransDiscreteTime):
         return durations, events.astype('int64')
 
 
+def weight_reset(m):
+    if isinstance(m, nn.Conv2d) or isinstance(m, nn.Linear):
+        m.reset_parameters()
+
+
 def cont_to_disc(data, labtrans=None, scheme="quantiles", time_intervals=20, competing=False):
     get_target = lambda df: (df['duration'].values, np.array(df['event'].values, dtype=np.float32))
     if labtrans is None:
@@ -339,7 +344,10 @@ def cross_validation_eta(df_local, eta_list, model_prior,
     _ = mapper_prior.fit_transform(df_train).astype('float32')
     x_test_prior = mapper_prior.transform(df_test).astype('float32')
 
-    get_target = lambda df: (df['duration'].values, np.array(df['event'].values, dtype=np.float32))
+    if competing is False:
+        get_target = lambda df: (df['duration'].values, np.array(df['event'].values, dtype=np.float32))
+    else:
+        get_target = lambda df: (df['duration'].values, df['event'].values)
     durations_test, events_test = get_target(df_test)
 
     # Begin create the CV sets
@@ -476,6 +484,9 @@ def model_generation(x_train, x_val, y_train, y_val, with_prior=True, eta=None, 
             net = tt.practical.MLPVanilla(in_features, num_nodes, out_features, batch_norm, dropout)
         else:
             net = Structure.MLPProportional(in_features, num_nodes, out_features, batch_norm, dropout, option=option)
+
+    net.apply(weight_reset)
+
     if Model is None:
         if competing is True:
             if with_prior:
@@ -483,7 +494,7 @@ def model_generation(x_train, x_val, y_train, y_val, with_prior=True, eta=None, 
                 model = LogisticHazard(net, optimizer, loss=loss)
             else:
                 loss = NewlyDefinedLoss3()
-                model = LogisticHazard(net, optimizer, loss=loss)
+                model = DeepHit(net, optimizer, loss=loss)
         else:
             if with_prior:
                 loss = NewlyDefinedLoss(eta, model_prior, time_intervals, option)
