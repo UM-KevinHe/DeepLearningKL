@@ -23,8 +23,21 @@ class DenseVanillaBlock(nn.Module):
         return input
 
 
-class ProportionalBlock(torch.nn.Module):
+class ProportionalBlock(nn.Module):
+    """
+        Simulate the last hidden layer in the proportional design. The goal for this operation is
+        to exploit the node (X^T b) and apply the formulas of 3 link functions.
+    """
     def __init__(self, out_features, option):
+        """
+        :param out_features: The dimension of the output layer (also that of the output layer for the whole
+        neural network).
+        :param option: The option for the link functions.
+        "log-log": The log-log link function.
+        "log-log-2" The log-log link function (implementation following from nnet-survival)
+        "log": The log link function.
+        "logit": The logit link function.
+        """
         super().__init__()
         self.a = torch.nn.Parameter(torch.randn((1, out_features)))
         nn.init.kaiming_normal_(self.a.data, nonlinearity='relu')
@@ -50,6 +63,11 @@ class ProportionalBlock(torch.nn.Module):
 
 
 class DenseProportionalBlock(nn.Module):
+    """
+    Simulate the second last hidden layer in the proportional design. The goal for this operation is
+    to combine all the effects of the input layer into one node.
+    Illustration: (X (R^n), b (R^n) ) -> X^T b (R)
+    """
     def __init__(self, in_features,
                  w_init_=lambda w: nn.init.kaiming_normal_(w, nonlinearity='relu')):
         super().__init__()
@@ -63,9 +81,23 @@ class DenseProportionalBlock(nn.Module):
 
 
 class MLPVanilla(nn.Module):
+    """
+    Vanilla MLP, simulating the fully-connected neural network.
+    """
     def __init__(self, in_features, num_nodes, out_features, batch_norm=True, dropout=None, activation=nn.ReLU,
                  output_activation=None, output_bias=True,
                  w_init_=lambda w: nn.init.kaiming_normal_(w, nonlinearity='relu')):
+        """
+        :param in_features: The dimension of the input vector.
+        :param num_nodes: The number of nodes (dimension) for each hidden layer.
+        :param out_features: The dimension of the output vector.
+        :param batch_norm: Whether applying batch normalization in each layer.
+        :param dropout: Whether applying dropout in each layer.
+        :param activation: The activation function in each hidden layer (we recommend ReLU and not change it).
+        :param output_activation: The activation function for the output layer.
+        :param output_bias: Whether there will be bias term in the output layer.
+        :param w_init_: The initialization technique.
+        """
         super().__init__()
         num_nodes = tuplefy(in_features, num_nodes).flatten()
         if not hasattr(dropout, '__iter__'):
@@ -86,8 +118,21 @@ class MLPProportional(nn.Module):
     def __init__(self, in_features, num_nodes, out_features, batch_norm=True, dropout=None, activation=nn.ReLU,
                  output_activation=None, output_bias=True,
                  w_init_=lambda w: nn.init.kaiming_normal_(w, nonlinearity='relu'), option=None):
+        """
+        :param in_features: The dimension of the input vector.
+        :param num_nodes: The number of nodes (dimension) for each hidden layer.
+        :param out_features: The dimension of the output vector.
+        :param batch_norm: Whether applying batch normalization in each layer.
+        :param dropout: Whether applying dropout in each layer.
+        :param activation: The activation function in each hidden layer (we recommend ReLU and not change it).
+        :param output_activation: The activation function for the output layer.
+        :param output_bias: Whether there will be bias term in the output layer.
+        :param w_init_: The initialization technique.
+        :param option: Whether the link function is.
+        This will take effect in the neural network structure "ProportionalBlock".
+        """
         if option not in ['log-log', 'log', 'logit', 'log-log-2']:
-            raise ValueError("Please provide with a link function, it should be one of ['log-log', 'log', 'logit']")
+            raise ValueError("Please provide with a link function, it should be one of ['log-log', 'log-log-2', 'log', 'logit']")
         super().__init__()
         num_nodes = tuplefy(in_features, num_nodes).flatten()
         if not hasattr(dropout, '__iter__'):
@@ -95,7 +140,8 @@ class MLPProportional(nn.Module):
         net = []
         for n_in, n_out, p in zip(num_nodes[:-1], num_nodes[1:], dropout):
             net.append(DenseVanillaBlock(n_in, n_out, True, batch_norm, p, activation, w_init_))
-        # New
+
+        # New Change!
         net.append(DenseProportionalBlock(num_nodes[-1]))
         net.append(ProportionalBlock(out_features, option))
         self.net = nn.Sequential(*net)

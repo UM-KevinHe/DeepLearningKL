@@ -34,6 +34,10 @@ best_eta_list = []
 
 
 class NewlyDefinedLoss(nn.Module):
+    """
+    Single-risk loss function with prior information.
+    """
+
     def __init__(self, eta, model, time_intervals, option=None):
         super().__init__()
         self.eta = eta
@@ -54,6 +58,9 @@ class NewlyDefinedLoss(nn.Module):
         combined_info = (torch.tensor(zeros_train, device=phi.device) + self.eta * prior_info_train) / (1 + self.eta)
 
         idx_durations = idx_durations.view(-1, 1)
+
+        # Note that for the final output layer, the implementation in pycox and that in our model
+        # may be different due to the change of the loss functions.
         if option is None:
             bce = F.binary_cross_entropy_with_logits(phi, combined_info, reduction='none')
         else:
@@ -62,10 +69,21 @@ class NewlyDefinedLoss(nn.Module):
         return loss.mean()
 
     def forward(self, phi, x_train, idx_durations, events):
+        """
+        :param phi: The output from the neural network (coming from x).
+        :param x_train: The original training covariates, used for obtaining prior information (coming from y).
+        :param idx_durations: The durations (event/censored time) (coming from y).
+        :param events: The event status (0/1 for single-risk, 0,1,...,q for competing-risk) (coming from y).
+        :return: loss value.
+        """
         return self.newly_defined_loss(phi, x_train, idx_durations, events)
 
 
 class NewlyDefinedLoss2(nn.Module):
+    """
+    Single-risk loss function without prior information (function used in pycox).
+    """
+
     def __init__(self, option=None):
         super().__init__()
         self.option = option
@@ -93,6 +111,11 @@ class NewlyDefinedLoss2(nn.Module):
 
 
 class NewlyDefinedLoss3(nn.Module):
+    """
+    Competing-risk loss function without prior information.
+    Note that this instead models hazard function, but not PMF.
+    """
+
     def __init__(self):
         super().__init__()
 
@@ -128,6 +151,11 @@ class NewlyDefinedLoss3(nn.Module):
 
 
 class NewlyDefinedLoss4(nn.Module):
+    """
+    Competing-risk loss function with prior information.
+    Note that this instead models hazard function, but not PMF.
+    """
+
     def __init__(self, eta, model):
         super().__init__()
 
@@ -175,6 +203,11 @@ class NewlyDefinedLoss4(nn.Module):
 
 
 class LabTransform(LabTransDiscreteTime):
+    """
+    Used in the transformation of the competing-Risk setting, this will change all events from
+    multi-variate into binary.
+    """
+
     def transform(self, durations, events):
         durations, is_event = super().transform(durations, events > 0)
         events[is_event == 0] = 0
@@ -187,6 +220,20 @@ def weight_reset(m):
 
 
 def cont_to_disc(data, labtrans=None, scheme="quantiles", time_intervals=20, competing=False):
+    """
+    Changing from contiuous time values into discrete time values.
+    :param data: The dataframe used for transforming.
+    :param labtrans: The transformation formula.
+    When labtrans == None, a new labtrans will be generated based on the data. Otherwise, the
+    existing labtrans will be applied on the data.
+    :param scheme: quantiles or equi-distance, see LogisticHazard paper for details.
+    :param time_intervals: The number of time intervals for discrete time model training.
+    :param competing: Whether the data is the competing-risk data.
+    The transformations are different for the single and competing risk data.
+    :return: If labtrans==None, the new labtrans will also be one of the return values.
+    Otherwise, only the transformed data will be the return value.
+    """
+
     get_target = lambda df: (df['duration'].values, np.array(df['event'].values, dtype=np.float32))
     if labtrans is None:
         if competing is True:
@@ -200,7 +247,6 @@ def cont_to_disc(data, labtrans=None, scheme="quantiles", time_intervals=20, com
         y_train = labtrans.transform(*get_target(data))
         data["duration"] = y_train[0]
         return data
-
 
 
 def hyperparameter_set_list(hidden_nodes=None,
@@ -251,10 +297,13 @@ def hyperparameter_set_list(hidden_nodes=None,
 
 def mapper_generation(cols_standardize=None, cols_leave=None, cols_categorical=None):
     """
-    Used for Standardization of the data.
+    Used for pre-processing of the data.
     It will be different for various datasets.
 
-    Usage: Firstly fit_transform() for the training data, then apply it (transform()) on the testing data.
+    :param cols_standardize: The list of covariates that would like to do standardization.
+    :param cols_leave: The list of covariates that would like to leave without preprocessing.
+    :param cols_categorical: The list of covariates that would like to do one-hot encoding.
+    :return: a mapper.
     """
 
     standardize = False
@@ -296,23 +345,30 @@ def cross_validation_eta(df_local, eta_list, model_prior,
                          net=None,
                          competing=False):
     """
-  Do Cross Validation and select the best eta with only local data
+    Do Cross Validation (CV) and select the best eta with only local data
 
-  df_local: The local data
-  eta_list: The etas that used for training
-  model_prior: The prior model used for generating prior information
-  time_intervals: time points for the discrete model
-  hidden_nodes: The number of hidden nodes for each layer
-  hidden_layers: The number of hidden layers
-  batch_norm: Whether we use the batch normalization
-  dropout: dropout rate
-  learning_rate: learning rate
-  batch_size: batch size
-  optimizer: optimizer, wrapped by torchtuple
-  epochs: epochs
-  patience: The waiting steps used in earlystopping
-  verbose: Whether you want to print out the logs for training
-"""
+    :param df_local: The local data.
+    :param eta_list: The etas that used for tuning.
+    :param model_prior: The prior model used for generating prior information.
+    :param parameter_set: The hyperparameter set for model training (local).
+    :param time_intervals: time points for the discrete model.
+    :param epochs: epochs.
+    :param patience: The waiting steps used in earlystopping.
+    :param n_splits: The number of folds for CV.
+    :param metric: The metric used for evaluation in CV
+    :param verbose: Whether you want to print out the logs for training.
+    :param cols_standardize: The list of covariates that would like to do standardization (for local data).
+    :param cols_leave: The list of covariates that would like to leave without preprocessing (for local data).
+    :param cols_categorical: The list of covariates that would like to do one-hot encoding (for local data).
+    :param cols_standardize_prior: The list of covariates that would like to do standardization (for prior data).
+    :param cols_leave_prior: The list of covariates that would like to leave without preprocessing (for prior data).
+    :param cols_categorical_prior: The list of covariates that would like to do one-hot encoding (for prior data).
+    :param net: The net structure (nn.Module)
+    only used when traditional fully-connected nerual network is not used for model training.
+    :param competing: Whether the data is the competing-risk data (this affects the approach of evaluation).
+    :return: best_eta, df_train, df_test, x_test, x_test_prior
+    """
+
 
     if parameter_set is None:
         parameter_set = {"hidden_nodes": 32, "hidden_layers": 2, "batch_norm": True,
@@ -429,24 +485,29 @@ def model_generation(x_train, x_val, y_train, y_val, with_prior=True, eta=None, 
                      net=None,
                      competing=False):
     """
-  Generate a model with or without the aid of prior information
+    Generate a model with or without the aid of prior information
 
-  x_train, x_val, y_train, y_val: x and y data that used for training the model
-  with_prior: whether you want to incorporate prior model. If False, eta and model_prior will not be required
-  eta: The parameter eta used for combining prior and local information, this should be obtained after CV
-  model_prior: The prior model used for generating prior information
-  time_intervals: time points for the discrete model
-  hidden_nodes: The number of hidden nodes for each layer
-  hidden_layers: The number of hidden layers
-  batch_norm: Whether we use the batch normalization
-  dropout: dropout rate
-  learning_rate: learning rate
-  batch_size: batch size
-  optimizer: optimizer, wrapped by torchtuple
-  epochs: epochs
-  patience: The waiting steps used in earlystopping
-  verbose: Whether you want to print out the logs for training
-  """
+    :param x_train: x and y data that used for training the model.
+    :param x_val: x and y data that used for training the model.
+    :param y_train: x and y data that used for training the model.
+    :param y_val: x and y data that used for training the model.
+    :param with_prior: Whether you want to incorporate prior model. If False, eta and model_prior will not be required.
+    :param eta: The parameter eta used for combining prior and local information, this should be obtained after CV.
+    :param model_prior: The prior model used for generating prior information.
+    :param parameter_set: The hyperparameter set for model training.
+    :param time_intervals: The number of time points for the discrete time model.
+    :param epochs: epochs.
+    :param patience: The waiting steps used in earlystopping.
+    :param verbose: Whether you want to print out the logs for training.
+    :param option: Whether using the 3 link functions. If so, the model will be proportional.
+    :param Model: The option to apply other existing models (such as Deephit, LogisticHazard, MTLR and so on).
+    :param net: The net structure (nn.Module)
+    only used when traditional fully-connected nerual network is not used for model training.
+    :param competing: Whether the data is the competing-risk data (this affects the approach of evaluation).
+    :return: model, log.
+    model is the trained model with/without prior information.
+    log is the log file, it can be used to draw the training and validation loss.
+    """
 
     if parameter_set is None:
         hidden_nodes = 32
@@ -533,22 +594,23 @@ def prior_model_generation(data,
                            net=None,
                            competing=False):
     """
-  Generate a model used for prior information.
+    Generate a model used for prior information.
 
-  data: prior_data
-  time_intervals: time points for the discrete model
-  hidden_nodes: The number of hidden nodes for each layer
-  hidden_layers: The number of hidden layers
-  batch_norm: Whether we use the batch normalization
-  dropout: dropout rate
-  learning_rate: learning rate
-  batch_size: batch size
-  optimizer: optimizer, wrapped by torchtuple
-  epochs: epochs
-  patience: The waiting steps used in earlystopping
-  verbose: Whether you want to print out the logs for training
 
-  """
+    :param data: prior_data
+    :param parameter_set:
+    :param time_intervals: The number of time points for the discrete model
+    :param epochs: epochs
+    :param patience: The waiting steps used in earlystopping
+    :param verbose: Whether you want to print out the logs for training
+    :param cols_standardize: The list of covariates that would like to do standardization (for prior data).
+    :param cols_leave: The list of covariates that would like to leave without preprocessing (for prior data).
+    :param cols_categorical: The list of covariates that would like to do one-hot encoding (for prior data).
+    :param net: The net structure (nn.Module)
+    only used when traditional fully-connected nerual network is not used for model training.
+    :param competing: Whether the data is the competing-risk data (this affects the approach of evaluation).
+    :return: model_prior, which is a model trained on prior data.
+    """
 
     if parameter_set is None:
         parameter_set = {"hidden_nodes": 32, "hidden_layers": 2, "batch_norm": True,
@@ -559,7 +621,8 @@ def prior_model_generation(data,
     data_prior_train = data.drop(data_prior_val.index)
     # if cols_standardize is None:
     #     cols_standardize = ['x1', 'x2', 'x3']
-    mapper = mapper_generation(cols_standardize=cols_standardize, cols_leave=cols_leave, cols_categorical=cols_categorical)
+    mapper = mapper_generation(cols_standardize=cols_standardize, cols_leave=cols_leave,
+                               cols_categorical=cols_categorical)
     x_train = mapper.fit_transform(data_prior_train).astype('float32')
     x_val = mapper.transform(data_prior_val).astype('float32')
 
@@ -578,6 +641,16 @@ def prior_model_generation(data,
 
 
 def evaluation_metrics(x_test, durations_test, events_test, model, competing=False, Deephit=False, option=False):
+    """
+    :param x_test: The covariates in the test data.
+    :param durations_test: The event time in the test data.
+    :param events_test: The event status in the test data.
+    :param model: The model for evaluation.
+    :param competing: Whether the data is the competing-risk data.
+    :param Deephit: Whether the model is Deephit (since Deephit models PMF, leading to different evaluation approach).
+    :param option: Whether the model is our new competing-risk model with the prior information.
+    :return: a list of three metrics: concordance_td, integrated_brier_score, integrated_nbll
+    """
     if competing is True:
         if Deephit is False:
             pmf_pre = model.predict(x_test)

@@ -3,6 +3,7 @@ import pandas as pd
 
 from pycox.simulations import base
 
+
 class _SimStudyRelativeRisk(base._SimBase):
     '''Abstract class for simulation relative risk survival data,
     with constant baseline, and constant censoring distribution

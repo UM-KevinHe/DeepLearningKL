@@ -11,6 +11,15 @@ from pycox.models import LogisticHazard
 
 
 def support_data():
+    """
+    Read the support data from the data repo in Vanderbilt University.
+    Introduction page: https://hbiostat.org/data/repo/SupportDesc.html
+    :return: The SUPPORT dataset with "x1" to "x14" the features selected for training.
+    Note that "x1", "x2", "x6" are transformed to categorical labels.
+    The time values are continuous.
+    TODO: discrete time values version of SUPPORT data.
+    """
+
     url = "https://hbiostat.org/data/repo/support2csv.zip"
     data_storage = "/content/drive/MyDrive/Kevin He/"
     path = data_storage + "a.zip"
@@ -65,16 +74,38 @@ def support_data():
 
 
 def metabric_data():
+    """
+    METABRIC dataset, directly copying from Deepsurv paper
+    :return: METABRIC dataset
+    """
     from pycox.datasets import metabric
     return metabric.read_df()
 
 
 def simulation_data(option="non linear non ph", n=300, grouping_number=0):
-    if (option == "non linear non ph"):
+    """
+    Simulation datasets with different assumptions of log-risk functions.
+
+    :param option: 3 options for different assumptions.
+    Example: "non linear non ph" means covariates have non-linear relationship with
+    the outcome and it does not follow proportional hazard (PH) assumption.
+    Similar for the other 2 options.
+
+    :param n: The number of individuals for the dataset.
+
+    :param grouping_number: The number of groups for this dataset.
+    If grouping_number==0, this means not dividing the dataset into groups.
+
+    :return: a dataframe with the simulated data (grouping_number == 0) or a list of dataframes
+    with each dataframe the simulated data (grouping_number != 0) with each dataframe having
+    n // grouping_number individuals.
+    """
+
+    if option == "non linear non ph":
         Sim = SimStudyNonLinearNonPH()
-    elif (option == "non linear ph"):
+    elif option == "non linear ph":
         Sim = SimStudyNonLinearPH()
-    elif (option == "linear ph"):
+    elif option == "linear ph":
         Sim = SimStudyLinearPH()
     else:
         raise ValueError("Please select a correct option")
@@ -92,6 +123,12 @@ def sim_event_times(mnist, max_time=365):
 
 
 def simulation_data_competing():
+    """
+    The simulation data for the competing-risk setting.
+    This dataset copies directly from the Deephit paper.
+    :return:
+    """
+
     url = 'https://raw.githubusercontent.com/chl8856/DeepHit/master/sample%20data/SYNTHETIC/synthetic_comprisk.csv'
     df_train = pd.read_csv(url)
     df_train['duration'] = df_train['time'].copy()
