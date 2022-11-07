@@ -10,7 +10,7 @@ from random import sample
 from pycox.models import LogisticHazard
 
 
-def support_data():
+def support_data(data_storage="/content/drive/MyDrive/Kevin He/", time_threshold=180):
     """
     Read the support data from the data repo in Vanderbilt University.
     Introduction page: https://hbiostat.org/data/repo/SupportDesc.html
@@ -69,6 +69,19 @@ def support_data():
 
     support = support.astype("float32")
     support = support.astype({"duration": "int64", "event": "int32"})
+
+    # Manually assign the time threshold
+
+    time_index = support['duration'] > time_threshold
+
+    event = support['event']
+    event[time_index] = 0
+    duration = support['duration']
+    duration[time_index] = time_threshold
+    duration
+
+    support['event'] = event
+    support['duration'] = duration
 
     return support
 
