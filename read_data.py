@@ -51,7 +51,6 @@ def support_data(data_storage="/content/drive/MyDrive/Kevin He/", time_threshold
     support["x11"] = support["wblc"]
     support["x12"] = support["sod"]
     support["x13"] = support["crea"]
-    support["x14"] = support["aps"]
     support["duration"] = support["d.time"]
     support["event"] = support["death"]
 
