@@ -641,7 +641,7 @@ def prior_model_generation(data,
     return model_prior
 
 
-def evaluation_metrics(x_test, durations_test, events_test, model, competing=False, Deephit=False, option=False):
+def evaluation_metrics(x_test, durations_test, events_test, model, competing=False, Deephit=False, option=False, summary=None):
     """
     :param x_test: The covariates in the test data.
     :param durations_test: The event time in the test data.
@@ -649,13 +649,22 @@ def evaluation_metrics(x_test, durations_test, events_test, model, competing=Fal
     :param model: The model for evaluation.
     :param competing: Whether the data is the competing-risk data.
     :param Deephit: Whether the model is Deephit (since Deephit models PMF, leading to different evaluation approach).
-    :param option: Whether the model is our new competing-risk model with the prior information.
+    :param option: Whether the model is our new competing-risk model with the prior information. True: Specific link functions
+    :param summary: 'mean' or None, 'mean': return the mean value; None: return the list of values. For competing-risk setting
     :return: a list of three metrics: concordance_td, integrated_brier_score, integrated_nbll
     """
+
+    time_grid = np.linspace(durations_test.min(), durations_test.max(), 100)
+
     if competing is True:
+        concordance_td_list = []
+        integrated_brier_score_list = []
+        integrated_nbll_list = []
+
         if Deephit is False:
             pmf_pre = model.predict(x_test)
             N = pmf_pre.shape[0]
+            Q = pmf_pre.shape[1]
             K = pmf_pre.shape[2]
             pmf_pre = torch.tensor(pmf_pre)
             pmf_pre = torch.cat((pmf_pre, 1 - torch.sum(pmf_pre, axis=1).reshape(N, 1, K)), 1)
@@ -663,33 +672,41 @@ def evaluation_metrics(x_test, durations_test, events_test, model, competing=Fal
 
             cif = (1 - pmf).cumprod(2)
 
-            cif1 = pd.DataFrame(np.array(cif[:, 0, :].t()), model.duration_index)
-            cif2 = pd.DataFrame(np.array(cif[:, 1, :].t()), model.duration_index)
-
-            ev1 = EvalSurv(cif1, durations_test, events_test == 1, censor_surv='km')
-            ev2 = EvalSurv(cif2, durations_test, events_test == 2, censor_surv='km')
+            for i in range(Q):
+                cif_i = pd.DataFrame(np.array(cif[:, i, :].t()), model.duration_index)
+                ev_i = EvalSurv(cif_i, durations_test, events_test == i + 1, censor_surv='km')
+                concordance_td_i = ev_i.concordance_td()
+                integrated_brier_score_i = ev_i.integrated_brier_score(time_grid)
+                integrated_nbll_i = ev_i.integrated_nbll(time_grid)
+                concordance_td_list.append(concordance_td_i)
+                integrated_brier_score_list.append(integrated_brier_score_i)
+                integrated_nbll_list.append(integrated_nbll_i)
 
         else:
             cif = model.predict_cif(x_test)
             # cif = (1-pmf).cumprod(1)
+            Q = cif.shape[0]
 
-            cif1 = pd.DataFrame(cif[0], model.duration_index)
-            cif2 = pd.DataFrame(cif[1], model.duration_index)
+            for i in range(Q):
+                cif_i = pd.DataFrame(cif[i], model.duration_index)
+                ev_i = EvalSurv(cif_i, durations_test, events_test == i + 1, censor_surv='km')
+                concordance_td_i = ev_i.concordance_td()
+                integrated_brier_score_i = ev_i.integrated_brier_score(time_grid)
+                integrated_nbll_i = ev_i.integrated_nbll(time_grid)
+                concordance_td_list.append(concordance_td_i)
+                integrated_brier_score_list.append(integrated_brier_score_i)
+                integrated_nbll_list.append(integrated_nbll_i)
 
-            ev1 = EvalSurv(1 - cif1, durations_test, events_test == 1, censor_surv='km')
-            ev2 = EvalSurv(1 - cif2, durations_test, events_test == 2, censor_surv='km')
+        if summary == 'mean':
+            concordance_td = sum(concordance_td_list) / len(concordance_td_list)
+            integrated_brier_score = sum(integrated_brier_score_list) / len(integrated_brier_score_list)
+            integrated_nbll = sum(integrated_nbll_list) / len(integrated_nbll_list)
+            return concordance_td, integrated_brier_score, integrated_nbll
 
-        concordance_td_1 = ev1.concordance_td()
-        concordance_td_2 = ev2.concordance_td()
-        concordance_td = (concordance_td_1 + concordance_td_2) / 2
-
-        time_grid = np.linspace(durations_test.min(), durations_test.max(), 100)
-        integrated_brier_score_1 = ev1.integrated_brier_score(time_grid)
-        integrated_brier_score_2 = ev2.integrated_brier_score(time_grid)
-        integrated_brier_score = (integrated_brier_score_1 + integrated_brier_score_2) / 2
-        integrated_nbll_1 = ev1.integrated_nbll(time_grid)
-        integrated_nbll_2 = ev2.integrated_nbll(time_grid)
-        integrated_nbll = (integrated_nbll_1 + integrated_nbll_2) / 2
+        elif summary is None:
+            return concordance_td_list, integrated_brier_score_list, integrated_nbll_list
+        else:
+            raise ValueError("Please provide one option, either 'mean', or None")
 
     else:
         if option is True:
