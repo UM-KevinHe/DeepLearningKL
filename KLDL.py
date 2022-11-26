@@ -373,7 +373,7 @@ def cross_validation_eta(df_local, eta_list, model_prior,
     if parameter_set is None:
         parameter_set = {"hidden_nodes": 32, "hidden_layers": 2, "batch_norm": True,
                          "learning_rate": 0.01, "batch_size": 32, "dropout": 0.1,
-                         "optimizer": tt.optim.Adam(), "alpha": 1}
+                         "optimizer": tt.optim.Adam(), "alpha": 1, "sigma": 0.1}
 
     if metric not in ['C-index', 'IBS', 'INBLL']:
         raise ValueError("Please provide with a metric used to do hyperparameter tuning, which should be one of ["
