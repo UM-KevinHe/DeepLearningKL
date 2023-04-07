@@ -718,7 +718,9 @@ def evaluation_metrics(x_test, durations_test, events_test, model, competing=Fal
         else:
             surv = model.predict_surv_df(x_test)
 
-        time_grid = np.linspace(durations_test.min(), durations_test.max(), 100)
+        durations_test_min = durations_test.min()
+        durations_test_max = durations_test.max()
+        time_grid = np.linspace(durations_test_min, durations_test_max, durations_test_max - durations_test_min + 1)
 
         ev = EvalSurv(surv, durations_test, events_test, censor_surv='km')
 
