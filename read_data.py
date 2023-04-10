@@ -171,3 +171,56 @@ def simulation_data_competing():
 #     target_train = labtrans.fit_transform(*sim_train_subset)
 #
 #     return img, *target_train
+
+def simulation_data_competing_own(size = 10000):
+    Mean = np.zeros((4, 1)).reshape(-1)
+
+    cov_1 = np.zeros((4, 4))
+    np.fill_diagonal(cov_1, 1)
+    cov_2 = np.zeros((4, 4))
+    np.fill_diagonal(cov_2, 1)
+    cov_3 = np.zeros((4, 4))
+    np.fill_diagonal(cov_3, 1)
+
+    x1 = np.random.multivariate_normal(Mean, cov_1, size=size * 2)
+    x2 = np.random.multivariate_normal(Mean, cov_2, size=size * 2)
+    x3 = np.random.multivariate_normal(Mean, cov_3, size=size * 2)
+
+    gamma_1 = np.ones((4, 1)) * 10
+    gamma_2 = np.ones((4, 1)) * 10
+    gamma_3 = np.ones((4, 1)) * 10
+
+    linear_term_1 = (x3 @ gamma_3) ** 2 + x1 @ gamma_1
+    linear_term_2 = (x3 @ gamma_3) ** 2 + x2 @ gamma_2
+
+    x1 = x1[(linear_term_1 > 0).reshape(-1)]
+    x2 = x2[(linear_term_2 > 0).reshape(-1)]
+
+    linear_term_1 = linear_term_1[linear_term_1 > 0]
+    linear_term_2 = linear_term_2[linear_term_2 > 0]
+
+    linear_term_1 = linear_term_1[:size]
+    linear_term_2 = linear_term_2[:size]
+
+    x1 = x1[:size, ]
+    x2 = x2[:size, ]
+    x3 = x3[:size, ]
+
+    time_1 = np.random.exponential(linear_term_1).reshape(-1, 1)
+    time_2 = np.random.exponential(linear_term_2).reshape(-1, 1)
+
+    Time = np.concatenate([time_1, time_2], axis=1)
+
+    Status = np.argmin(Time, axis=1).reshape(-1, 1) + 1
+    Status = np.array(Status, dtype=np.int64)
+    Time = np.amin(Time, axis=1).reshape(-1, 1)
+
+    Status_2 = np.random.binomial(1, 0.5, size).reshape(-1, 1)
+
+    Time[Status_2 == 0] = np.random.uniform(0, Time[Status_2 == 0])
+    Status[Status_2 == 0] = 0
+    data = pd.DataFrame(np.concatenate([x1, x2, x3, Time, Status], axis=1),
+                        columns=['feature' + str(i + 1) for i in range(12)] + ['duration', 'event'])
+    data['event'] = np.array(data['event'], dtype=np.int64)
+
+    return(data)
