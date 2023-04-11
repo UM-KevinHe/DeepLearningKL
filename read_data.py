@@ -190,8 +190,8 @@ def simulation_data_competing_own(size = 10000):
     gamma_2 = np.ones((4, 1)) * 10
     gamma_3 = np.ones((4, 1)) * 10
 
-    linear_term_1 = (x3 @ gamma_3) ** 2 + x1 @ gamma_1
-    linear_term_2 = (x3 @ gamma_3) ** 2 + x2 @ gamma_2
+    linear_term_1 = (x3 @ gamma_3) ** 2 + (x1 @ gamma_1) ** 2
+    linear_term_2 = (x3 @ gamma_3) ** 2 + (x2 @ gamma_2) ** 2
 
     x1 = x1[(linear_term_1 > 0).reshape(-1)]
     x2 = x2[(linear_term_2 > 0).reshape(-1)]
